@@ -94,7 +94,7 @@ class Index extends Controller {
 
         // 自定义handle
         Logger.setHandle(function(msg, level) {
-            console.log(`[${level}] [${msg}]`)
+            Logger.info(`[${level}] [${msg}]`)
         });
         Logger.info('自定义handle');
 

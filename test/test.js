@@ -2,6 +2,6 @@
 const {app, Logger} = require('../jj.js');
 
 //server
-app.run(3000, '127.0.0.1', function(err){
+app.run(3000, '0.0.0.0', function(err){
     if(!err) Logger.info('http server is ready on 3000');
 });

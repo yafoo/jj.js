@@ -1,8 +1,8 @@
-const {Controller} = require('../../../jj.js');
+const {Controller, Logger} = require('../../../jj.js');
 
 class DiyController extends Controller {
     async _init() {
-        console.log('_init');
+        Logger.info('_init');
     }
 
     async index() {
