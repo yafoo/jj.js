@@ -1,0 +1,17 @@
+{{extend './layout.htm'}}
+{{block 'title'}}
+    <title>{{title}}</title>
+{{/block}}
+{{block 'content'}}
+<div class="c">
+    <h1>jj.js</h1>
+    <hr>
+    <div>本页地址：{{url(url_str)}}</div>
+    <hr>
+    {{@content}}
+    <hr>
+    <div>
+        <a class="btn" href="javascript:history.go(-1);" style="display: inline-block;">返回</a>
+    </div>
+</div>
+{{/block}}

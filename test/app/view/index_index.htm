@@ -1,0 +1,18 @@
+{{extend './layout.htm'}}
+{{block 'title'}}
+    <title>{{title}}</title>
+{{/block}}
+{{block 'content'}}
+<div class="c">
+    <h1>jj.js</h1>
+    <hr>
+    <div>本页地址：{{url()}}</div>
+    <hr>
+    <div>功能测试，部分功能需在控制台查看输出。</div>
+    <ul>
+        {{each link_list}}
+        <li><a href="{{$value.url}}">{{$value.title}}</a></li>
+        {{/each}}
+    </ul>
+</div>
+{{/block}}

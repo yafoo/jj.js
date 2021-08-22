@@ -1,0 +1,21 @@
+{{extend './layout.htm'}}
+{{block 'title'}}
+    <title>{{title}}</title>
+{{/block}}
+{{block 'content'}}
+<div class="c">
+    {{@content}}
+    <ul>
+        <li>{{url()}}</li>
+        <li>{{url('cate', '/')}}</li>
+        <li>{{url('cate/cate', '.html')}}</li>
+        <li>{{url('cate/index/cate', '.html')}}</li>
+        <li>{{url('test', {var: 'test', var2: 'test2'}, '.html')}}</li>
+        <li>{{url('test?var3=vvv', {var: 'test', var2: 'test2'}, '.html', 'http://www.baidu.com')}}</li>
+        <li>{{url('test?var=vvv', {var: 'test', var2: 'test2'}, '.html')}}</li>
+        <li>{{url('index/cate#')}}</li>
+        <li>{{url('test?var=vvv#bbb', {var: 'test', var2: 'test2'}, '.html')}}</li>
+        <li>{{url(':name', {var: 'test', var2: 'test2', var3: 'test3'}, '.html')}}</li>
+    </ul>
+</div>
+{{/block}}

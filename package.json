@@ -4,7 +4,7 @@
   "description": "A simple and lightweight MVC framework built on nodejs+koa2",
   "main": "jj.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/test.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,15 @@
   "bugs": {
     "url": "https://github.com/yafoo/jj.js/issues"
   },
-  "homepage": "https://github.com/yafoo/jj.js#readme"
+  "homepage": "https://github.com/yafoo/jj.js#readme",
+  "dependencies": {
+    "@koa/router": "^10.0.0",
+    "art-template": "^4.13.2",
+    "ejs": "^3.1.6",
+    "is-class": "0.0.9",
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0",
+    "koa-static": "^5.0.0",
+    "mysql": "^2.18.1"
+  }
 }
