@@ -27,7 +27,7 @@ routes = [
     {url: '/pagination', path: 'index/pagination', method: 'get'},
     {url: '/pagination/list_:page.html(.*)', path: 'index/pagination', method: 'get'},
     {url: '/file', path: 'index/index', method: 'get', type: 'view'},
-    {url: '/:var1/:var2/:var3', path: 'index/index', method: 'get', type: 'view', name: 'test'},
+    {url: '/test/:var1/:var2/:var3', path: 'index/index', method: 'get', name: 'test'},
 ];
 
 module.exports = routes;
