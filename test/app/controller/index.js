@@ -9,20 +9,22 @@ class Index extends Controller {
 
     async index() {
         const link_list = [
-            {title: '输出字符串内容', url: this.$$url.build('show_str')},
-            {title: '加载文件显示', url: this.$$url.build('load_file')},
-            {title: '中间件测试', url: this.$$url.build('middle_test')},
-            {title: '数据库测试，需要先配置数据库文件', url: this.$$url.build('mysql')},
-            {title: '缓存测试', url: this.$$url.build('cache')},
-            {title: '日志测试', url: this.$$url.build('log')},
-            {title: '路由直接输出', url: this.$$url.build(':show')},
-            {title: '路由到模板文件直接输出', url: this.$$url.build('template')},
-            {title: '路由到中间件（不建议这种用法）', url: this.$$url.build('middleware')},
-            {title: '路由到自定义控制器层', url: this.$$url.build(':diy')},
-            {title: '不继承系统控制器', url: this.$$url.build('not_extend_sys_controller/index')},
-            {title: '分页测试', url: this.$$url.build('/pagination')},
-            {title: 'url生成测试', url: this.$$url.build('url')},
-            {title: 'Cookie测试', url: this.$$url.build('cookie')},
+            {title: '输出字符串内容', url: this.$url.build('show_str')},
+            {title: '加载文件显示', url: this.$url.build('load_file')},
+            {title: '中间件测试', url: this.$url.build('middle_test')},
+            {title: '数据库测试，需要先配置数据库文件', url: this.$url.build('mysql')},
+            {title: '缓存测试', url: this.$url.build('cache')},
+            {title: '日志测试', url: this.$url.build('log')},
+            {title: '路由直接输出', url: this.$url.build(':show')},
+            {title: '路由到模板文件直接输出', url: this.$url.build('template')},
+            {title: '路由到中间件（不建议这种用法）', url: this.$url.build('middleware')},
+            {title: '路由到自定义控制器层', url: this.$url.build(':diy')},
+            {title: '不继承系统控制器', url: this.$url.build('not_extend_sys_controller/index')},
+            {title: '分页测试', url: this.$url.build('/pagination')},
+            {title: 'url生成测试', url: this.$url.build('url')},
+            {title: 'Cookie测试', url: this.$url.build('cookie')},
+            {title: 'Context测试', url: this.$url.build('context')},
+            {title: 'Exception测试', url: this.$url.build('exception')},
         ];
 
         this.assign('title', 'jj.js - 一个简单轻量级Node.js MVC框架');
@@ -67,7 +69,7 @@ class Index extends Controller {
     }
 
     async cache() {
-        const cache = this.$$cache;
+        const cache = this.$cache;
         Logger.info(Cache === cache, Cache.get === cache.get, Cache.get() === cache.get());
         Logger.info('---------------------------');
         Logger.info(JSON.stringify(Cache.get()), JSON.stringify(cache.get()));
@@ -82,7 +84,7 @@ class Index extends Controller {
     }
 
     async log() {
-        this.$$logger.info('logger.info');
+        this.$logger.info('logger.info');
         Logger.error('logger.error');
         Logger.warning('logger.warning');
         Logger.debug('logger.debug');
@@ -163,6 +165,24 @@ class Index extends Controller {
         await this.fetch('view');
     }
 
+    async context() {
+        console.log(this.$controller.__node); // 自动定位到当前应用controller目录
+        console.log(this.$diy.__node); // 自动定位到当前应用diy目录
+        console.log(this.$logic.__node); // 自动定位到公共应用logic目录
+        console.log(this.$app.__node); // 自动定位到当前应用根目录
+        console.log(this.$url.__node); // 自动定位到系统类库url文件
+        console.log(this.$utils.__node); // 自动定位到系统类库utils目录
+        console.log(this.$.__node); // 强制定位到系统类库目录
+        console.log(this._.__node); // 强制定位到项目根目录
+        this.assign('content', '请查看控制台输出！');
+        await this.fetch('view');
+    }
+
+    async exception() {
+        // throw new Error('异常测试');
+        this.$response.exception(new Error('异常测试'));
+    }
+
     async mysql() {
         const db = new Db(this.ctx);
         const list = await db.table('article a').field('a.title, a.id, a.click, c.c_name').join('cate c', 'c.id=a.cate_id').where({'a.click': ['in', '102,201'], source: ['=', 'me', 'or']}).where({add_time: 2, update_time: 0}, 'or').where({add_time: ['>=', 0], update_time: 0}).group('add_time').having('add_time>1').order('a.id', 'desc').limit(0, 10).select();
@@ -175,8 +195,8 @@ class Index extends Controller {
             this.$model.article.db.page(2, 3).select()
         ]);
         //const list2 = model_article.db.find();
-        //const list3 = this.ctx.$.app.model.article.db.find();
-        //const list4 = this.ctx.$.app.model.article.db.page(2, 3).select();
+        //const list3 = this.ctx.$app.model.article.db.find();
+        //const list4 = this.ctx.$app.model.article.db.page(2, 3).select();
         //const data = {"cate_id":2,"user_id":0,"title":"测试文章","writer":"雨思","source":"me","source_link":"","click":200,"keywords":"测试,文章","description":"这是一篇测试文章","content":"测试文章测试'文章测试文章内容"};
         //const data2 = {"cate_id":2,"user_id":0,"title":"rtrtrt","writer":"雨思","source":"me","source_link":"","click":200,"keywords":"测试,文章","description":"这是一篇测试文章","content":"test'cccccc"};
         //Logger.info(await model_article.db.table('article').sql().insert(data));
