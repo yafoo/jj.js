@@ -144,6 +144,8 @@ class Index extends Controller {
         arr.push(url.build(':test', {var1: 'test', var2: 'test2', var3: 'test3'}, '.html'));
         arr.push(url.build(':diy'));
         arr.push(url.build(':show'));
+        arr.push(url.build('showStr'));
+        arr.push(url.build('index/loadFile'));
 
         this.assign('content', arr.join('<br>'));
         await this.fetch('view');
