@@ -24,7 +24,7 @@
   "dependencies": {
     "@koa/router": "^10.1.0",
     "art-template": "^4.13.2",
-    "ejs": "^3.1.6",
+    "escape-html": "^1.0.3",
     "is-class": "0.0.9",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
