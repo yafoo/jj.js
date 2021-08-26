@@ -57,7 +57,7 @@ class Index extends Controller {
     }
 
     async loadFile() {
-        let readme = await this.view.load('/../README.md', true);
+        let readme = await this.load('/../README.md', true);
         readme = readme.replace('</p>', '</p><hr>');
         this.assign('content', readme);
         await this.fetch('view');
@@ -168,14 +168,14 @@ class Index extends Controller {
     }
 
     async context() {
-        console.log(this.$controller.__node); // 自动定位到当前应用controller目录
-        console.log(this.$diy.__node); // 自动定位到当前应用diy目录
-        console.log(this.$logic.__node); // 自动定位到公共应用logic目录
-        console.log(this.$app.__node); // 自动定位到当前应用根目录
-        console.log(this.$url.__node); // 自动定位到系统类库url文件
-        console.log(this.$utils.__node); // 自动定位到系统类库utils目录
-        console.log(this.$.__node); // 强制定位到系统类库目录
-        console.log(this._.__node); // 强制定位到项目根目录
+        this.$logger.info(JSON.stringify(this.$controller.__node)); // 自动定位到当前应用controller目录
+        this.$logger.info(JSON.stringify(this.$diy.__node)); // 自动定位到当前应用diy目录
+        this.$logger.info(JSON.stringify(this.$logic.__node)); // 自动定位到公共应用logic目录
+        this.$logger.info(JSON.stringify(this.$app.__node)); // 自动定位到当前应用根目录
+        this.$logger.info(JSON.stringify(this.$url.__node)); // 自动定位到系统类库url文件
+        this.$logger.info(JSON.stringify(this.$utils.__node)); // 自动定位到系统类库utils目录
+        this.$logger.info(JSON.stringify(this.$.__node)); // 强制定位到系统类库目录
+        this.$logger.info(JSON.stringify(this._.__node)); // 强制定位到项目根目录
         this.assign('content', '请查看控制台输出！');
         await this.fetch('view');
     }
