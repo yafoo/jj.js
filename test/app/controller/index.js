@@ -187,15 +187,33 @@ class Index extends Controller {
 
     async mysql() {
         const db = new Db(this.ctx);
-        const list = await db.table('article a').field('a.title, a.id, a.click, c.c_name').join('cate c', 'c.id=a.cate_id').where({'a.click': ['in', '102,201'], source: ['=', 'me', 'or']}).where({add_time: 2, update_time: 0}, 'or').where({add_time: ['>=', 0], update_time: 0}).group('add_time').having('add_time>1').order('a.id', 'desc').limit(0, 10).select();
 
-        const Arc = require('../model/article');
-        const model_article = new Arc(this.ctx, this.next);
-        const [list2, list3, list4] = await Promise.all([
-            model_article.db.find(),
-            this.$model.article.db.find(),
-            this.$model.article.db.page(2, 3).select()
-        ]);
+        await db.startTrans();
+        await db.startTrans();
+        await db.startTrans();
+        await db.commit();
+        await db.commit();
+        await db.commit();
+
+        await this.$db.startTrans();
+        await this.$db.startTrans();
+        await this.$db.startTrans();
+        await this.$db.commit();
+        await this.$db.commit();
+        await this.$db.commit();
+
+        this.assign('content', '请查看控制台输出！');
+        await this.fetch('view');
+
+        // const list = await db.table('article a').field('a.title, a.id, a.click, c.c_name').join('cate c', 'c.id=a.cate_id').where({'a.click': ['in', '102,201'], source: ['=', 'me', 'or']}).where({add_time: 2, update_time: 0}, 'or').where({add_time: ['>=', 0], update_time: 0}).group('add_time').having('add_time>1').order('a.id', 'desc').limit(0, 10).select();
+
+        // const Arc = require('../model/article');
+        // const model_article = new Arc(this.ctx, this.next);
+        // const [list2, list3, list4] = await Promise.all([
+        //     model_article.db.find(),
+        //     this.$model.article.db.find(),
+        //     this.$model.article.db.page(2, 3).select()
+        // ]);
         //const list2 = model_article.db.find();
         //const list3 = this.ctx.$app.model.article.db.find();
         //const list4 = this.ctx.$app.model.article.db.page(2, 3).select();
@@ -204,7 +222,7 @@ class Index extends Controller {
         //Logger.info(await model_article.db.table('article').sql().insert(data));
         
 
-        this.ctx.body = {list, list2, list3, list4};
+        //this.ctx.body = {list, list2, list3, list4};
     }
 }
 
