@@ -25,15 +25,19 @@ class Index extends Controller {
             {title: 'Cookie测试', url: this.$url.build('cookie')},
             {title: 'Context测试', url: this.$url.build('context')},
             {title: 'Exception测试', url: this.$url.build('exception')},
+            {title: '成功提示', url: this.$url.build('success')},
+            {title: '错误提示', url: this.$url.build('error')},
+            {title: '302跳转', url: this.$url.build('redirect')},
+            {title: 'show object', url: this.$url.build('show')},
         ];
 
-        this.assign('title', 'jj.js - 一个简单轻量级Node.js MVC框架');
-        this.assign('link_list', link_list);
-        await this.fetch();
+        this.$assign('title', 'jj.js - 一个简单轻量级Node.js MVC框架');
+        this.$assign('link_list', link_list);
+        await this.$fetch();
     }
 
     async showStr() {
-        await this.show(`<!doctype html>
+        this.$show(`<!doctype html>
             <html>
             <head>
                 <meta charset="utf-8">
@@ -57,15 +61,15 @@ class Index extends Controller {
     }
 
     async loadFile() {
-        let readme = await this.load('/../README.md', true);
+        let readme = await this.$view.load('/../README.md');
         readme = readme.replace('</p>', '</p><hr>');
-        this.assign('content', readme);
-        await this.fetch('view');
+        this.$assign('content', readme);
+        await this.$fetch('view');
     }
 
     async middleTest() {
-        this.assign('content', '请查看控制台输出！');
-        await this.fetch('view');
+        this.$assign('content', '请查看控制台输出！');
+        await this.$fetch('view');
     }
 
     async cache() {
@@ -79,8 +83,8 @@ class Index extends Controller {
         Logger.info('---------------------------');
         Logger.info(JSON.stringify(Cache.get()), JSON.stringify(cache.get()));
 
-        this.assign('content', '请查看控制台输出！');
-        await this.fetch('view');
+        this.$assign('content', '请查看控制台输出！');
+        await this.$fetch('view');
     }
 
     async log() {
@@ -104,8 +108,8 @@ class Index extends Controller {
         Logger.setHandle();
         Logger.info('重置系统handle');
 
-        this.assign('content', '请查看控制台输出！');
-        await this.fetch('view');
+        this.$assign('content', '请查看控制台输出！');
+        await this.$fetch('view');
     }
 
     async pagination() {
@@ -122,12 +126,12 @@ class Index extends Controller {
         const page2 = this.$pagination.my_pagination.render(200);
         html += page2;
 
-        this.assign('content', html);
-        await this.fetch('view');
+        this.$assign('content', html);
+        await this.$fetch('view');
     }
 
     async url() {
-        const url =  new Url(this.ctx, this.next);
+        const url =  new Url(this.ctx);
         const arr = [];
         arr.push(url.build());
         arr.push(url.build('cate', '/'));
@@ -147,12 +151,12 @@ class Index extends Controller {
         arr.push(url.build('showStr'));
         arr.push(url.build('index/loadFile'));
 
-        this.assign('content', arr.join('<br>'));
-        await this.fetch('view');
+        this.$assign('content', arr.join('<br>'));
+        await this.$fetch('view');
     }
 
     async cookie() {
-        const cookie = new Cookie(this.ctx, this.next);
+        const cookie = new Cookie(this.ctx);
         let value = cookie.get('cookie_test');
         if(!value) {
             value = 1;
@@ -163,8 +167,8 @@ class Index extends Controller {
         cookie.set('cookie_test2', 'value2', {maxAge: 1000 * 3600});
         cookie.set('cookie_test3', 'value3', {expires: new Date('2020-07-06')});
 
-        this.assign('content', `cookie_value: ${value}`);
-        await this.fetch('view');
+        this.$assign('content', `cookie_value: ${value}`);
+        await this.$fetch('view');
     }
 
     async context() {
@@ -176,13 +180,29 @@ class Index extends Controller {
         this.$logger.info(JSON.stringify(this.$utils.__node)); // 自动定位到系统类库utils目录
         this.$logger.info(JSON.stringify(this.$.__node)); // 强制定位到系统类库目录
         this.$logger.info(JSON.stringify(this._.__node)); // 强制定位到项目根目录
-        this.assign('content', '请查看控制台输出！');
-        await this.fetch('view');
+        this.$assign('content', '请查看控制台输出！');
+        await this.$fetch('view');
     }
 
     async exception() {
         // throw new Error('异常测试');
         this.$response.exception(new Error('异常测试'));
+    }
+
+    async success() {
+        this.$success();
+    }
+
+    async error() {
+        this.$error();
+    }
+
+    async redirect() {
+        this.$redirect('/');
+    }
+
+    async show() {
+        this.$show({data: 'object'});
     }
 
     async mysql() {
@@ -202,13 +222,13 @@ class Index extends Controller {
         await this.$db.commit();
         await this.$db.commit();
 
-        this.assign('content', '请查看控制台输出！');
-        await this.fetch('view');
+        this.$assign('content', '请查看控制台输出！');
+        await this.$fetch('view');
 
         // const list = await db.table('article a').field('a.title, a.id, a.click, c.c_name').join('cate c', 'c.id=a.cate_id').where({'a.click': ['in', '102,201'], source: ['=', 'me', 'or']}).where({add_time: 2, update_time: 0}, 'or').where({add_time: ['>=', 0], update_time: 0}).group('add_time').having('add_time>1').order('a.id', 'desc').limit(0, 10).select();
 
         // const Arc = require('../model/article');
-        // const model_article = new Arc(this.ctx, this.next);
+        // const model_article = new Arc(this.ctx);
         // const [list2, list3, list4] = await Promise.all([
         //     model_article.db.find(),
         //     this.$model.article.db.find(),

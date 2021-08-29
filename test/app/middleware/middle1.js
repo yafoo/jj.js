@@ -3,7 +3,7 @@ const {Logger} = require('../../../jj.js');
 module.exports = class {
     constructor(ctx, next) {
         this.ctx = ctx;
-        this.next = next;
+        this.$next = next;
     }
 
     async test() {
@@ -30,13 +30,13 @@ module.exports = class {
         </body>
         </html>`;
 
-        // 执行next，将继续向下匹配路由
-        //await this.next();
+        // 执行$next，将继续向下匹配路由
+        //await this.$next();
     }
 
     async end() {
         Logger.info('middle1 end');
-        await this.next();
+        await this.$next();
         Logger.info('middle1 end await');
     }
 }
