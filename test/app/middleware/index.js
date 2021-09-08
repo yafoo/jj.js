@@ -1,7 +1,8 @@
 //const {Middleware} = require('jj.js');
 const {Middleware, Logger} = require('../../../jj.js');
 
-class Index extends Middleware {
+class Index extends Middleware
+{
     async middle() {
         Logger.info('中间件：输出之前');
         await this.$next();

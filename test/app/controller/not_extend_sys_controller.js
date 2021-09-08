@@ -1,4 +1,5 @@
-class NotExtendSysController {
+class NotExtendSysController
+{
     constructor(ctx) {
         this.ctx = ctx;
     }

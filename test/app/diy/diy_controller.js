@@ -1,6 +1,7 @@
 const {Controller, Logger} = require('../../../jj.js');
 
-class DiyController extends Controller {
+class DiyController extends Controller
+{
     async _init() {
         Logger.info('_init');
     }

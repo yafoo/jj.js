@@ -1,7 +1,8 @@
 //const {Controller} = require('jj.js');
 const {Controller, Db, Cache, Pagination, Logger, Url, Cookie} = require('../../../jj.js');
 
-class Index extends Controller {
+class Index extends Controller
+{
     constructor(...args) {
         super(...args);
         this.middleware = ['middle', {middleware: 'auth', accept: 'middleTest'}];
