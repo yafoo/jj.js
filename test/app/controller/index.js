@@ -114,7 +114,7 @@ class Index extends Controller
     }
 
     async pagination() {
-        let html = new Pagination(this.ctx).init({pageType: 'params', urlIndex: '/pagination', urlPage: '/pagination/list_${page}.html'}).total(200).render();
+        let html = new Pagination(this.ctx).init({key_origin: 'params', url_index: '/pagination', url_page: '/pagination/list_${page}.html'}).total(200).render();
 
         const css = `<style>
             .page{display:flex;}
