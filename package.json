@@ -1,6 +1,6 @@
 {
   "name": "jj.js",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A simple and lightweight MVC framework built on nodejs+koa2",
   "main": "jj.js",
   "scripts": {
