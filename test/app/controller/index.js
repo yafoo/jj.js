@@ -240,7 +240,7 @@ class Index extends Controller
         //const list4 = this.ctx.$app.model.article.db.page(2, 3).select();
         //const data = {"cate_id":2,"user_id":0,"title":"测试文章","writer":"雨思","source":"me","source_link":"","click":200,"keywords":"测试,文章","description":"这是一篇测试文章","content":"测试文章测试'文章测试文章内容"};
         //const data2 = {"cate_id":2,"user_id":0,"title":"rtrtrt","writer":"雨思","source":"me","source_link":"","click":200,"keywords":"测试,文章","description":"这是一篇测试文章","content":"test'cccccc"};
-        //Logger.info(await model_article.db.table('article').sql().insert(data));
+        //Logger.info(await model_article.db.table('article').getSql().insert(data));
         
 
         //this.ctx.body = {list, list2, list3, list4};
