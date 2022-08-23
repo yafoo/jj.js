@@ -11,7 +11,7 @@ A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs
 ### 项目特性
 
 1. 系统架构模仿Thinkphp5，很容易上手
-2. 系统类库、用户类库都支持自动加载及懒加载
+2. 系统类库、用户类库都支持自动加载、懒加载、自动生成单实例
 3. 支持应用级、路由级、控制器级三级中间件，方便插件及二次开发
 4. 支持单应用和多应用两种运行模式
 
@@ -34,7 +34,7 @@ npm i jj.js
 
 ## Hello world !
 
-1、创建文件 `./app/controller/index.js`
+1、创建控制器文件 `./app/controller/index.js`
 
 ```javascript
 const {Controller} = require('jj.js');
@@ -49,7 +49,7 @@ class Index extends Controller
 module.exports = Index;
 ```
 
-2、创建文件 `./server.js`
+2、创建应用入口文件 `./server.js`
 
 ```javascript
 const {app, Logger} = require('jj.js');
@@ -101,8 +101,8 @@ node server.js
 #### 应用目录介绍：
 - **config**: 应用配置目录，系统的所有配置参数都放这里，也可以简化为一个config
 .js文件，所有配置参数会覆盖框架默认参数。其中config这个名字不允许修改。
-- **app、app2、common**： 为应用目录，common为公共应用目录，可以存放公共的model、logic或其他的文件，app为默认访问的应用。jj.js框架支持单应用和多应用运行模式，在config/app.js中把`app_multi`设置为`true`即为多应用模式，此时可以创建app2、app3更多应用。框架默认为单应用模式。
-- **public**：静态资源目录，主要放只css文件、js文件、图片等静态资源。在config/app.js中通过`static_dir`参数可以设置或更改静态目录名字，为空时，则关闭静态访问（系统不会加载静态资源访问的逻辑，最大节省内容，也即所谓的轻量）
+- **app、app2、common**： 为应用目录，common为公共应用目录，可以存放公共的model、logic或其他的文件，app为默认访问的应用。jj.js框架支持单应用和多应用运行模式，在`./config/app.js`中把`app_multi`设置为`true`即为多应用模式，此时可以创建app2、app3更多应用。框架默认为单应用模式。
+- **public**：静态资源目录，主要存放css文件、js文件、图片等静态资源。在`./config/app.js`中通过`static_dir`参数可以设置或更改静态目录名字，为空时，则关闭静态访问（系统不会加载静态资源访问的逻辑，最大节省内容，也即所谓的轻量）
 - **server.js**：应用入口文件，名字可以任意改。
 
 > 
@@ -112,15 +112,15 @@ node server.js
 const {app, Controller, Db, Model, Pagination, View, Logger, Cookie, Response, Upload, Url, Middleware, Cache, Context, View} = require('jj.js');
 ```
 
-系统类库除了app，其他都是Class类型，其中Logger和Cache是静态类，开发时建议继承系统类库，这样可以在类内使用$开头的属性，实现自动加载功能，链式调用类方法时会自动实例化一个单例。例如，在控制器内使用 `this.$logger` 会返回系统Logger类，使用 `this.$logger.info()`，会自动生成一个logger单例，并调用info方法，其他系统类库及类库内可以以这种方法调用。
+系统类库除了`app`，其他都是`Class`类型，其中`Logger`和`Cache`是静态类，开发时建议继承系统类库，这样可以在类内使用`$`开头的属性，实现自动加载功能，链式调用类方法时会自动实例化一个单例。例如，在控制器内使用 `this.$logger` 会返回系统Logger类，使用 `this.$logger.info()`，会自动生成一个`logger`单例，并调用`info`方法，其他系统类库及类库内可以以这种方法调用。
 
 ### 类库自动加载初相识
 
-> 类库自动加载及懒加载是整个框架的核心，这里以hello world！示例程序先简单做个介绍。
+> 类库自动加载、懒加载是整个框架的核心，这里以hello world！示例程序先简单做个介绍。
 
-1、假如想在`./app/controller/index.js`控制器的user方法中读取user数据表中id为1的用户，我们直接上代码：
+1、假如想在`./app/controller/index.js`控制器的`user`方法中读取`user`数据表中`id`为1的用户，我们直接上代码：
 
-```
+```javascript
 const {Controller} = require('jj.js');
 
 class Index extends Controller
@@ -140,9 +140,9 @@ module.exports = Index;
 
 - 访问url：`http://127.0.0.1:3000/index/user`，即可看到打印的json用户信息。
 
-- 其中`async user() {}`为异步方法，在控制器中，对外可以以链接访问的方法必须设置为异步函数。使用`this.$db`调用框架db类，这里控制器必须继承框架Controller类，否则会调用失败。
+- 其中`async user() {}`为异步方法，在控制器中，对外可以以url访问的方法必须设置为异步函数。使用`this.$db`调用框架db类，这里控制器必须继承框架`Controller`类，否则会调用失败。
 
-- 在控制器中，前缀为`$`字符的属性为特殊属性，框架首先会检测本类中即`this`实例中是否有`$db`属性，有的话，会直接调用。如果没有，会检测本类文件所在应用目录即`./app/`目录下，是否用`db`目录或文件，如果有，则`$db`即代表那个目录或文件，`this.$db.table`会继续在db目录下寻找table目录或文件。如果`db`目录或文件不存在，框架会在系统根目录`./`下找，是否有`db`目录或文件，如果有，和上面一样。如果还不存在，框架会在jj.js框架`lib`目录下找`db`文件或目录，而框架`lib`中有`db.js`文件，至此，`this.$db`成功访问到框架`db`类。
+- 在控制器中，前缀为`$`字符的属性为特殊属性，框架首先会检测本类中即`this`实例中是否有`$db`属性，有的话，会直接调用。如果没有，会检测本类文件所在应用目录即`./app/`目录下，是否用`db`目录或文件，如果有，则`$db`即代表那个目录或文件，`this.$db.table`会继续在db目录下寻找table目录或文件。如果`db`目录或文件不存在，框架会在应用根目录`./`下找，是否有`db`目录或文件，如果有，和上面一样。如果还不存在，框架会在jj.js框架`lib`目录下找`db`文件或目录，而框架`lib`中有`db.js`文件，至此，`this.$db`成功访问到框架`db`类。
 
 - 如果将`this.$db`赋值为给一个变量，`const db = this.$db;`，得到的将是一个`db` Class类，可以进行new操作，`const db = this.$db; const db1 = new this.$db(); const db2 = new this.$db();`创建多个实例。
 
@@ -156,7 +156,7 @@ module.exports = Index;
 
 2、假如自己创建了数据表模型`./app/model/user.js`，然后想在控制器中使用，模型文件代码如下：
 
-```
+```javascript
 const {Model} = require('jj.js');
 
 class User extends Model
@@ -170,9 +170,9 @@ class User extends Model
 module.exports = User;
 ```
 
-同样在控制器的user方法中读取user数据表中id为1的用户，我们直接上代码：
+这时在控制器的user方法中读取user数据表中id为1的用户，我们直接上代码：
 
-```
+```javascript
 const {Controller} = require('jj.js');
 
 class Index extends Controller
@@ -192,7 +192,7 @@ module.exports = Index;
 
 - 访问url：`http://127.0.0.1:3000/index/user`，同样看到打印的json用户信息。
 
-- 根据示例1的加载检测机制，`this.$model`会自动定位到`./app/model/`目录，`this.$model.user`会自动加载`./app/model/user.js`类文件，调用方法`getUserInfo`，会自动生成一个`user`模型的单例，并调单例的`getUserInfo`方法。
+- 根据示例1的加载检测机制，`this.$model`会自动定位到`./app/model/`目录，`this.$model.user`会自动加载`./app/model/user.js`类文件，调用方法`getUserInfo`，会自动生成一个`user`模型的单实例，并调此单实例的`getUserInfo`方法。
 
 - 可以看到，不管是系统类库，还是自定义类库，都可以实现自动加载、懒加载、自动生成单实例。
 
