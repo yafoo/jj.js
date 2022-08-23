@@ -21,7 +21,7 @@ A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs
 
 码云镜像：[https://gitee.com/yafu/jj.js](https://gitee.com/yafu/jj.js "https://gitee.com/yafu/jj.js")
 
-官网地址：[https://me.i-i.me/jjjs/](https://me.i-i.me/jjjs/ "https://me.i-i.me/jjjs/")
+官网地址：[https://me.i-i.me/special/jj.html](https://me.i-i.me/special/jj.html "https://me.i-i.me/special/jj.html")
 	
 
 ## 安装
@@ -396,7 +396,7 @@ module.exports = Index;
 
 ## 应用案例
 
-- [基于jj.js的轻量博客系统：Melog](https://me.i-i.me/melog/)
+- [基于jj.js的轻量博客系统：Melog](https://me.i-i.me/special/melog.html)
 
 ### Nginx代理
 
