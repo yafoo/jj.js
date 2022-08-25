@@ -556,6 +556,17 @@ const page = {
 
 示例2：`this.setFilter({'sum': (a, b) => {return a + b;}, 'fun2': () => {}});` // 同时设置sum、fun2两个函数，设置后可以在模板中使用
 
+> 提示：View类初始化时，默认会设置一个`url`的模板函数，即在模板文件里可以直接使用`url`函数生成网址，示例：
+
+```javascript
+// 首页模板代码
+{{url('user')}}
+
+// 生成网址(单应用模式)
+'/index/user'
+```
+`url`函数具体用法，请参考Url类的`build`方法
+
 > 方法：**setFolder(view_folder)** 动态设置模版函数
 
 > 方法：**setDepr(view_depr)** 动态设置文件分割符
@@ -652,9 +663,9 @@ options默认继承`config.cookie`参数
 
 参数dir为文件保存目录，相对应用的根目录。内部会自动执行`check()`方法。
 
-示例1：``await this.file('img').save('upload');` // 会将上传的图片保存到upload目录下
+示例1：`await this.file('img').save('upload');` // 会将上传的图片保存到upload目录下
 
-示例2：``await this.file('img').validate({size: 1024, ext: 'png', type: 'png'}).save('upload');` // 设置只能上传小于1M的png图片
+示例2：`await this.file('img').validate({size: 1024, ext: 'png', type: 'png'}).save('upload');` // 设置只能上传小于1M的png图片
 
 上传成功返回参数：
 
@@ -675,12 +686,146 @@ return {
 
 > 方法：**build(url='', vars, ext='', domain='')** 生成url网址
 
+Url类build方法，会根据当前访问url参数，智能生成需要的网址，假如单应用模式访问`127.0.0.1/user/info`
+
+示例1：`this.build()` // '/user/list'
+
+示例2：`this.build('list')` // '/user/list'
+
+示例3：`this.build('article/list')` // '/article/list'
+
+示例4：`this.build('list', {type: 'hot', order: 'click'})` // '/user/list?type=host&order=click'
+
+示例5：`this.build('list', '.html')` // '/user/list.html'
+
+示例6：`this.build('list', '.html', 'localhost')` // 'localhost/user/list.html'
+
+如果`url`参数包含`/`前缀，则直接做为网址使用
+
+示例7：`this.build('/list', {type: 'hot'})` // '/list?type=host'
+
+如果自定义的有路由地址，通过路由名字可以反向编译地址，假如有路由定义`./config/routes.js`
+
+```javascript
+route = [
+    {url: '/article/:id.html', path: 'article/article', name: 'article'},
+];
+
+module.exports = route;
+```
+这是一个自定义文章页路由地址，当访问`127.0.0.1/article/123.html`时会匹配到这个地址，并且这条路由的名字`name`为`article`，在url反向编译路由时，通过带`:`号的名字来定义：
+
+示例8：`this.build(':article', {id: 456})` // '/article/456.html'
+
 ### Context配置上下文类
 
 > 属性：**ctx** 整个框架的上下文，具体参数，可以参考[Koa上下文(Context)ctx文档](https://www.itying.com/koa/)
 
 ### config配置
 
+应用的配置可以为`.config/`目录+`.config/xxx.js`文件的形式，也可以直接写到一个`.config.js`文件里。
+
+应用配置不用每项都设置，只设置自己需要改的，默认会继承框架的默认配置，在控制器、中间件、模板类、模型类里都可以通过`this.$config.xxx`使用。
+
+app配置`.config/app.js`：
+```javascript
+{
+    app_debug: true, // 调试模式
+    app_multi: false, // 是否开启多应用
+
+    default_app: 'app', // 默认应用
+    default_controller: 'index', //默认控制器
+    default_action: 'index', // 默认方法
+
+    common_app: 'common', // 公共应用，存放公共模型及逻辑
+    controller_folder: 'controller', //控制器目录名
+
+    static_dir: '', // 静态文件目录，相对于应用根目录，为空或false时，关闭静态访问
+
+    koa_body: null // koa-body配置参数，为''、null、false时，关闭koa-body，此时upload类将不可用，并且系统接收不到post参数。启用的话，建议配置：{multipart: true, formidable: {keepExtensions: true, maxFieldsSize: 10 * 1024 * 1024}}
+}
+```
+模板配置`.config/view.js`：
+```javascript
+{
+    view_folder: 'view', // 模板目录名
+    view_depr: '/', // 模版文件名分割符，'/'代表二级目录
+    view_ext: '.htm', // 模版文件后缀
+    view_engine: 'art-template', // 默认模版引擎，字符串或引擎类，咱不支持更换
+    view_filter: {}, // 模版函数，配置注入模板的函数，默认会自动注入url函数
+}
+```
+数据库配置`.config/db.js`：可以配置多个，方便程序里切换使用。
+```javascript
+{
+    default: {
+        type      : 'mysql', // 数据库类型
+        host      : '127.0.0.1', // 服务器地址
+        database  : 'jj', // 数据库名
+        user      : 'root', // 数据库用户名
+        password  : '', // 数据库密码
+        port      : '', // 数据库连接端口
+        charset   : 'utf8', // 数据库编码默认采用utf8
+        prefix    : 'jj_' // 数据库表前缀
+    }
+}
+```
+日志配置`.config/log.js`：log_handle可以自定义日志handle
+```javascript
+{
+    log_level: [], // [error, warning, info, debug, http, sql]
+    log_handle: function(msg, level) {console.log(`[${format('YY-mm-dd HH:ii:ss')}] [${level}] ${typeof msg == 'String' ? msg : JSON.stringify(msg)}`);} //function(msg, level) {}
+}
+```
+缓存配置`.config/cache.js`：
+```javascript
+{
+    cache_time: 60 * 60 * 24, // 默认缓存时间（1天），为空或false则为10年
+    clear_time: undefined // (undefined: 一天清理一次, 0: 关闭自动清理, >0: 为自动清理周期)
+}
+```
+分页配置`.config/page.js`：
+```javascript
+{
+    page_key    : 'page', // 默认分页标识
+    key_origin    : 'query', // query 或 params
+    page_size   : 10, // 默认分页大小
+    page_length : 5, // 默认分页长度，数字页码链接数量
+
+    //网址规则，可为空，可为路由名字，可用参数：页码${page}
+    //样例：':name'
+    //样例：'/list_${page}.html'
+    url_page    : '',
+    url_index   : '',
+
+    //模块样式 可用参数：网址${url}，页码${page}，总数${total_page}，总页数${total_page}
+    index_tpl   : '<li class="index"><a href="${url}">首页</a></li>',
+    end_tpl     : '<li class="end"><a href="${url}">末页</a></li>',
+    prev_tpl    : '<li class="prev"><a href="${url}">上一页</a></li>',
+    next_tpl    : '<li class="next"><a href="${url}">下一页</a></li>',
+    list_tpl    : '<li><a href="${url}">${page}</a></li>',
+    active_tpl  : '<li class="active"><a href="${url}">${page}</a></li>',
+    info_tpl    : '<span class="info">共${total_page}页，${total}条记录</span>',
+
+    //渲染模版
+    template   : '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
+}
+```
+跳转模板配置`.config/tpl.js`：模板可以配置为自定义的
+```javascript
+{
+    jump: require('./tpl/jump'), // 跳转模板
+    exception: require('./tpl/exception') //  异常页面模板
+}
+```
+自定义配置`.config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
+```javascript
+{
+    option1: ''
+    option2: ''
+    ...
+}
+```
 
 ## 应用案例
 
