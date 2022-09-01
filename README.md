@@ -300,9 +300,9 @@ module.exports = Index;
 
 ### Db数据库类
 
-> 方法：**async startTrans(async fun)** 开启事务
+> 方法：**async startTrans(fun)** 开启事务
 
-异步方法，如果fun不为空，并且是函数，则开启事务后，会自动执行此函数，并提交事务，不用再手工提交或回滚事务。
+异步方法，如果`fun`不为空，并且是函数，则开启事务后，会自动执行此函数，并提交事务，不用再手工提交或回滚事务。`fun`为异步函数。
 
 > 方法：**async commit()** 提交事务
 
@@ -853,7 +853,7 @@ module.exports = self;
 ```javascript
 routes = [
     {url: '/', path: 'app/index/index2'}, // 访问'/'，会定位到app应用的index控制的index2方法
-    {url: '/article/:id.html', path: 'app/article/article', name: 'article'}, // 访问'/article/123.html'，会定位到app应用的article控制的article方法；通过this.ctx.parrams.id可以获取到参数id；通过article可以反编译网址，执行this.$url.build(':article', {id: 123}); 生成'/article/123.html'
+    {url: '/article/:id.html', path: 'app/article/article', name: 'article'}, // 访问'/article/123.html'，会定位到app应用的article控制的article方法；通过this.ctx.params.id可以获取到参数id；通过article可以反编译网址，执行this.$url.build(':article', {id: 123}); 生成'/article/123.html'
     {url: '/admin', path: 'app/admin/check', type: 'middleware'}, // 访问'/admin'，会定位到app应用的admin中间件的check方法
     {url: '/about', path: 'app/about/index', type: 'view'}, // 访问'/about'，会定位到app应用的view模板目录about目录下的index.htm文件，并直接输出文件内容
     {url: '/:cate/list_:page.html', path: 'cate/cate', name: 'cate_page'}, // 多参数分页示例
@@ -862,7 +862,7 @@ routes = [
 
 module.exports = routes;
 ```
-> 注意：本路由配置示例前两条规则为常规用法，后面的非常规用法，不建议使用。如果是但应用模式，可以去掉path参数里的app。
+> 注意：本路由配置示例前两条规则为常规用法，后面的非常规用法，不建议使用。如果是单应用模式，可以去掉path参数里的app。
 
 ### 应用入口文件
 
