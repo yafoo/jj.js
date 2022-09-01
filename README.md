@@ -30,7 +30,7 @@ A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs
 npm i jj.js
 ```
 
-> 运行环境要求：node.js >= v12
+> 运行环境要求：node.js >= v12 mysql >= 5.3
 
 ## Hello world !
 
@@ -275,6 +275,16 @@ module.exports = Index;
 异步方法，继承自`Middleware`类，调用后，会等待执行全局路由配置里后面能匹配的路由。
 
 > 注意：所有的输出和跳转并不会阻止后续代码执行，所以要终止代码执行，需在前面加上`return`。
+
+> 方法：**async _init()** 控制器初始化
+
+异步方法，除了使用控制器中间件执行一些初始化或验证外，控制器提供了这个更简单的方法。一旦控制器定义了这个方法，在通过url访问控制器其他公开方法时，在执行完控制器中间件后，都会先执行这个函数，如果想终止后续代码执行，可以在方法里返回`false`。
+
+> 方法：**async _end()** 控制器结束
+
+如果定义了这个函数，在通过url访问控制器其他公开方法后，会调用这个函数。
+
+> 注意：因为系统默认注册了 `应用/控制器/方法` 的全局路由，所以控制器里的方法都能被直接访问，如果想作为私有方法不被访问，可以在方法前加下划线`_`前缀。
 
 ### Middleware中间件类
 
@@ -727,9 +737,9 @@ module.exports = route;
 
 应用配置不用每项都设置，只设置自己需要改的，默认会继承框架的默认配置，在控制器、中间件、模板类、模型类里都可以通过`this.$config.xxx`使用。
 
-app配置`.config/app.js`：
+- app配置`.config/app.js`：
 ```javascript
-{
+const app = {
     app_debug: true, // 调试模式
     app_multi: false, // 是否开启多应用
 
@@ -744,20 +754,22 @@ app配置`.config/app.js`：
 
     koa_body: null // koa-body配置参数，为''、null、false时，关闭koa-body，此时upload类将不可用，并且系统接收不到post参数。启用的话，建议配置：{multipart: true, formidable: {keepExtensions: true, maxFieldsSize: 10 * 1024 * 1024}}
 }
+module.exports = app;
 ```
-模板配置`.config/view.js`：
+- 模板配置`.config/view.js`：
 ```javascript
-{
+const view = {
     view_folder: 'view', // 模板目录名
     view_depr: '/', // 模版文件名分割符，'/'代表二级目录
     view_ext: '.htm', // 模版文件后缀
     view_engine: 'art-template', // 默认模版引擎，字符串或引擎类，咱不支持更换
     view_filter: {}, // 模版函数，配置注入模板的函数，默认会自动注入url函数
 }
+module.exports = view;
 ```
-数据库配置`.config/db.js`：可以配置多个，方便程序里切换使用。
+- 数据库配置`.config/db.js`：可以配置多个，方便程序里切换使用。
 ```javascript
-{
+const db = {
     default: {
         type      : 'mysql', // 数据库类型
         host      : '127.0.0.1', // 服务器地址
@@ -769,24 +781,27 @@ app配置`.config/app.js`：
         prefix    : 'jj_' // 数据库表前缀
     }
 }
+module.exports = db;
 ```
-日志配置`.config/log.js`：log_handle可以自定义日志handle
+- 日志配置`.config/log.js`：log_handle可以自定义日志handle
 ```javascript
-{
+const log = {
     log_level: [], // [error, warning, info, debug, http, sql]
     log_handle: function(msg, level) {console.log(`[${format('YY-mm-dd HH:ii:ss')}] [${level}] ${typeof msg == 'String' ? msg : JSON.stringify(msg)}`);} //function(msg, level) {}
 }
+module.exports = log;
 ```
-缓存配置`.config/cache.js`：
+- 缓存配置`.config/cache.js`：
 ```javascript
-{
+const cache = {
     cache_time: 60 * 60 * 24, // 默认缓存时间（1天），为空或false则为10年
     clear_time: undefined // (undefined: 一天清理一次, 0: 关闭自动清理, >0: 为自动清理周期)
 }
+module.exports = cache;
 ```
-分页配置`.config/page.js`：
+- 分页配置`.config/page.js`：
 ```javascript
-{
+const page = {
     page_key    : 'page', // 默认分页标识
     key_origin    : 'query', // query 或 params
     page_size   : 10, // 默认分页大小
@@ -810,22 +825,65 @@ app配置`.config/app.js`：
     //渲染模版
     template   : '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
 }
+module.exports = page;
 ```
-跳转模板配置`.config/tpl.js`：模板可以配置为自定义的
+- 跳转模板配置`.config/tpl.js`：模板可以配置为自定义的
 ```javascript
-{
+const tpl = {
     jump: require('./tpl/jump'), // 跳转模板
     exception: require('./tpl/exception') //  异常页面模板
 }
+module.exports = tpl;
 ```
-自定义配置`.config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
+- 自定义配置`.config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
 ```javascript
-{
+const self = {
     option1: ''
     option2: ''
     ...
 }
+module.exports = self;
 ```
+- 路由配置`.config/routes.js`：
+路由功能基于`@koa/router`开发，关于url匹配规则可以参考官方文档：[文档地址](https://www.npmjs.com/package/@koa/router)
+
+> 本框架默认内置 `应用/控制器/方法` 的全局路由，即如果不需要定制url，可以直接访问，无需配置路由。
+
+> 路由配置为一个数组，每一项为一条规则，项属性包含url规则，path访问路径，name规则名字，type路由类型。url一旦匹配，即会停止，如果需要继续向下匹配，需在程序内调用 `await this.$next();`，路由配置参考示例：
+```javascript
+routes = [
+    {url: '/', path: 'app/index/index2'}, // 访问'/'，会定位到app应用的index控制的index2方法
+    {url: '/article/:id.html', path: 'app/article/article', name: 'article'}, // 访问'/article/123.html'，会定位到app应用的article控制的article方法；通过this.ctx.parrams.id可以获取到参数id；通过article可以反编译网址，执行this.$url.build(':article', {id: 123}); 生成'/article/123.html'
+    {url: '/admin', path: 'app/admin/check', type: 'middleware'}, // 访问'/admin'，会定位到app应用的admin中间件的check方法
+    {url: '/about', path: 'app/about/index', type: 'view'}, // 访问'/about'，会定位到app应用的view模板目录about目录下的index.htm文件，并直接输出文件内容
+    {url: '/:cate/list_:page.html', path: 'cate/cate', name: 'cate_page'}, // 多参数分页示例
+    {url: '/hello', path: async (ctx, next) => {ctx.body = 'hello world, hello jj.js!';}} // 直接路由到函数
+];
+
+module.exports = routes;
+```
+> 注意：本路由配置示例前两条规则为常规用法，后面的非常规用法，不建议使用。如果是但应用模式，可以去掉path参数里的app。
+
+### 应用入口文件
+
+应用入口文件放在项目的根目录，名字可以任意改。
+
+示例文件 `./server.js`
+```javascript
+const {app, Logger} = require('jj.js');
+
+app.run(3000, '127.0.0.1', function(err){
+    !err && Logger.info('http server is ready on 3000');
+});
+```
+其中`app`是一个koa实例，可以使用`use`方法添加应用级中间件，使用方法参考koa文档。`app`的`run`方法经过了封装，仅允许调用一次。其中`Logger`因为是一个静态类，所以可以直接调用`info`方法输出日志。
+
+## 总结
+
+通过以上文档，可以看到：
+1. jj.js是一个轻量的mvc框架，几乎所有文件不使用就不会调用。
+2. 同时也是个功能强大的框架，支持应用级、路由级、控制器级三级中间件。
+3. 类库自动加载，只要是继承自`Context`的类库，都可以在方法内使用包含`$`前缀的属性自动加载其他资源。
 
 ## 应用案例
 
