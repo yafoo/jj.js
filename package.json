@@ -4,7 +4,6 @@
   "description": "A simple and lightweight MVC framework built on nodejs+koa2",
   "main": "jj.js",
   "scripts": {
-    "test": "node test/test.js"
   },
   "repository": {
     "type": "git",
