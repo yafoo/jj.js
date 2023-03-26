@@ -67,6 +67,8 @@ node server.js
 
 4、浏览器访问 `http://127.0.0.1:3000`，页面输出 `Hello jj.js, hello world !`
 
+5、在Stackblitz中打开 [Hello world !](https://stackblitz.com/edit/node-frhrfi?embed=1&file=app/controller/index.js)
+
 ## 开发手册
 
 ### 应用目录结构
