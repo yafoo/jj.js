@@ -2,11 +2,11 @@
 
 ![jj.js](https://me.i-i.me/static/images/jjjs.png "jj.js")
 
-A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs+koa2构建的简单轻量级MVC框架）
+A super simple lightweight NodeJS MVC framework（一个超级简单轻量的NodeJS MVC框架）
 
 ## 项目介绍
 
-本框架依赖koa2、koa-router、art-template、mysql，基于proxy实现了代码自动加载及懒加载技术，最低运行依赖仅仅为koa和koa-router，非常轻量。
+本框架依赖koa2、@koa/router、art-template、mysql，基于proxy实现了代码自动加载及懒加载技术，最低运行依赖仅仅为koa和koa-router，非常轻量。
 
 ### 项目特性
 
@@ -14,6 +14,7 @@ A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs
 2. 系统类库、用户类库都支持自动加载、懒加载、自动生成单实例
 3. 支持应用级、路由级、控制器级三级中间件，方便插件及二次开发
 4. 支持单应用和多应用两种运行模式
+5. jsdoc支持，完善vscode代码提示
 
 ### 项目地址
 
@@ -30,7 +31,7 @@ A simple and lightweight MVC framework built on nodejs+koa2（一个基于nodejs
 npm i jj.js
 ```
 
-> 运行环境要求：node.js >= v12 mysql >= 5.3
+> 运行环境要求：node.js >= v12.7.0
 
 ## Hello world !
 
@@ -52,10 +53,11 @@ module.exports = Index;
 2、创建应用入口文件 `./server.js`
 
 ```javascript
-const {app, Logger} = require('jj.js');
+const {App, Logger} = require('jj.js');
+const app = new App();
 
-app.run(3000, '127.0.0.1', function(err){
-    !err && Logger.info('http server is ready on 3000');
+app.run(3000, '0.0.0.0', function(err){
+    !err && Logger.log('app', 'http server is ready on 3000');
 });
 ```
 
@@ -110,12 +112,12 @@ node server.js
 ### 系统类库
 
 ```javascript
-const {app, Controller, Db, Model, Pagination, View, Logger, Cookie, Response, Upload, Url, Middleware, Cache, Context, View} = require('jj.js');
+const {App, Controller, Db, Model, Pagination, View, Logger, Cookie, Response, Upload, Url, Middleware, Cache, Context, View} = require('jj.js');
 ```
 
 ![jj.js类库继承关系图](https://me.i-i.me/static/images/jj_class.png "jj.js类库继承关系图")
 
-系统类库除了`app`，其他都是`Class`类型，其中`Logger`和`Cache`是静态类，开发时建议继承系统类库，这样可以在类内使用`$`开头的属性，实现自动加载功能，链式调用类方法时会自动实例化一个单例。例如，在控制器内使用 `this.$logger` 会返回系统Logger类，使用 `this.$logger.info()`，会自动生成一个`logger`单例，并调用`info`方法，其他系统类库及类库内可以以这种方法调用。
+系统类库都是`Class`类型，其中`Logger`和`Cache`是静态类；开发时建议继承系统类库，这样可以在类内使用`$`开头的属性，实现自动加载功能，链式调用类方法时会自动实例化一个单例。例如，在控制器内使用 `this.$logger` 会返回系统Logger类，使用 `this.$logger.info()`，会自动生成一个`logger`单例，并调用`info`方法，其他系统类库及类库内可以以这种方法调用。
 
 ### 类库自动加载
 
@@ -203,546 +205,13 @@ module.exports = Index;
 
 3、除了框架db类、自定义模型类，整个应用和框架的所有自定义类库、配置文件，都支持同过`this.$xxxx`调用。
 
-### Controller控制器
-
-系统控制器类继承自系统中间件类Middleware，包含所有Middleware方法。
-
-> 属性：**middleware** 定义控制器中间件
-
-数组，定义控制器中间件，一个元素为一个中间件，元素为字符串或对象。
-
-示例1： `this.middleware = ['index']`，则控制器内所有方法访问之前都会调用当前应用目录（app）下中间件目录（middleware ）下的控制器同名中间件的index方法。
-
-示例2： `this.middleware = ['index', {middleware: 'auth/test', accept: 'middleTest'}]`，则控制器内所有方法访问之前都会先调用当前应用目录（app）下中间件目录（middleware ）下的控制器同名中间件的index方法。仅当访问控制器middleTest方法之前，还会再调用当前应用下中间件目录下的auth中间件的test方法（需index中间件内调用`this.$next()`方法，否则后续程序不会执行）。
-
-> 方法：**$assign(name, value)** 赋值模版变量
-
-示例1：`this.$assign('title', 'Hello jj.js !')`，在模版内使用变量 `{{title}}`
-
-如果name为一个对象，则清除之前赋值的模板变量，并将name设置为模板变量对象。
-
-示例2：`this.$assign({'title': 'jj.js', 'content': 'Hello jj.js !'})`，在模版内可使用变量 `{{title}}`、`{{content}}`
-
-> 方法：**$data(name)** 获取已赋模版变量
-
-如果name为空，则获取全部变量。
-
-> 方法：**async $fetch(template)** 渲染模板文件并输出
-
-异步方法，来自`View`类，渲染模板文件，并输出内容。
-
-其中template会自动自动定位模板文件，如果name为空，则定位到当前应用下view目录下的控制器同名目录下的方法同名htm文件。
-
-示例1：`this.$fetch()`，在index控制器类的index方法调用，则模板定位到`/app/view/index/index.htm`
-
-示例2：`this.$fetch('list/show')`，则模板定位到`/app/view/list/show.htm`
-
-> 方法：**async $load(template)** 加载并输出模板文件
-
-异步方法，来自`View`类，直接加载模板文件，并输出文件内容。模板定位规则同$fetch方法。
-
-> 方法：**async $render(data)** 渲染字符串模板
-
-来自`View`类，渲染字符串模板，并输出。data为字符串模版内容。
-
-示例1：`this.$render('<div>{{title}}</div>')`，会输出`<div>jj.js</div>`
-
-> 方法：**$show(content)** 输出字符串内容或转换后的json字符串
-
-继承自`Middleware`类，输出content内容，如果content为对象或数组，则输出json字符串。
-
-> 方法：**$redirect(name, status = 302)** 302或其他跳转
-
-继承自`Middleware`类，网页跳转，name解析同$fetch方法。
-
-示例1：`this.$redirect('test')`，在index控制器类的index方法调用，则跳转到到`/app/index/test`地址
-
-示例2：`this.$redirect('/show')`，name包含'/'前缀，则跳转到地址`/show`
-
-> 方法：**$success(msg, name)** 成功跳转或输出
-
-继承自`Middleware`类，返回成功提示，name解析同$redirect方法，如果是ajax请求，则返回json数据。
-
-示例1：`this.$success('操作成功！', 'test')`，返回成功提示，并跳转到`/app/index/test`地址
-
-示例2：`this.$success({ajax: 'data'})`，如果是ajax请求，则返回json `{state: 1, msg: '操作成功！', data: {ajax: 'data'}}`
-
-> 方法：**$error(msg, name)** 错误跳转或输出
-
-继承自`Middleware`类，返回失败提示，name解析同$success方法，name为空，则跳转来源网址。
-
-> 方法：**async $next()** 执行下一个路由匹配
-
-异步方法，继承自`Middleware`类，调用后，会等待执行全局路由配置里后面能匹配的路由。
-
-> 注意：所有的输出和跳转并不会阻止后续代码执行，所以要终止代码执行，需在前面加上`return`。
-
-> 方法：**async _init()** 控制器初始化
-
-异步方法，除了使用控制器中间件执行一些初始化或验证外，控制器提供了这个更简单的方法。一旦控制器定义了这个方法，在通过url访问控制器其他公开方法时，在执行完控制器中间件后，都会先执行这个函数，如果想终止后续代码执行，可以在方法里返回`false`。
-
-> 方法：**async _end()** 控制器结束
-
-如果定义了这个函数，在通过url访问控制器其他公开方法后，会调用这个函数。
-
-> 注意：因为系统默认注册了 `应用/控制器/方法` 的全局路由，所以控制器里的方法都能被直接访问，如果想作为私有方法不被访问，可以在方法前加下划线`_`前缀。
-
-### Middleware中间件类
-
-> 方法：**$show(content)** 参照控制器类介绍
-
-> 方法：**$redirect(url, status)** 参照控制器类介绍
-
-> 方法：**$success(msg, url)** 参照控制器类介绍
-
-> 方法：**$error(msg, url)** 参照控制器类介绍
-
-> 方法：**async $next()** 执行下一个中间件
-
-### Db数据库类
-
-> 方法：**connect(options)** 连接数据库
-
-> 方法：**async close()** 关闭数据库连接
-
-> 方法：**async startTrans(fun)** 开启事务
-
-异步方法，如果`fun`不为空，并且是函数，则开启事务后，会自动执行此函数，并提交事务，不用再手工提交或回滚事务。`fun`为异步函数。
-
-> 方法：**async commit()** 提交事务
-
-> 方法：**async rollback()** 事务回滚
-
-> 方法：**prefix(prefix)** 设置数据表前缀
-
-> 方法：**table(table)** 设置数据表
-
-table参数：数据表名字，不带前缀
-
-> 方法：**field(field)** 设置查询字段
-
-支持字符串或数组，支持多次调用
-
-示例1：`this.field('id,name');`
-
-示例2：`this.field(['id', 'name']).field('mobile');`
-
-> 方法：**where(where, logic)** 设置查询条件
-
-支持多次调用，`logic`设置多次调用之间的连接条件，默认为`and`，where参数为对象
-
-示例1：设置查询id为1的条件
-
-`this.where({id: 1});` // where id = 1
-
-示例2：设置查询name为'aaa'，并且sex为1的条件
-
-`this.where({name: 'aaa', sex: 1});` // where name = 'aaa' and sex = 1
-
-示例3：多次调用`where`，设置查询name为'aaa'，并且sex为1的条件，并且age大于18的条件
-
-`this.where({name: 'aaa', sex: 1}).where({age: ['>', 18]}); // where (name = 'aaa' and sex = 1) and (age > 18)`
-
-可以看到，当字段值不是等于（=）时，字段值使用数组来标识，其中数组第一项为表达式（>），数组第二项为表达式要对比的值。数组的第三项为一个where内的连接逻辑，不设置的话默认为`and`，或连接的话，设置为`or`。
-
-示例4：设置查询name为'aaa'，或着sex为1的条件
-
-`this.where({name: 'aaa', sex: ['=', 1, 'or']});` // where name = 'aaa' or sex = 1
-
-> 说明：where支持所有表达式（'=', '<>', '!=', '>', '>=', '<', '<=', 'like', 'not like', 'in', 'not in', 'between', 'not between', 'is', 'is not', 'exp'）
-
-> 方法：**distinct()** 数据去重
-
-> 方法：**group(field)** 数据分组
-
-> 方法：**having(condition)** 数据筛选
-
-> 方法：**order(field, order='asc')** 查询排序
-
-order方法支持多次调用。
-
-示例：`this.order('id', 'desc').order('sort');` // order by id desc, sort asc
-
-> 方法：**limit(offset, rows)** 查询数据限制
-
-示例1：`this.limit(1, 10);` // limit 1, 10
-
-示例2：`this.limit(10);` // limit 10
-
-> 方法：**page(page, pageSize)** 分页查询
-
-当要进行分页查询时，用这个方法会更方便。
-
-示例1：`this.page(1, 10);` // limit 0, 10
-
-示例2：`this.page(2, 10);` // limit 10, 10
-
-> 方法：**cache(time)** 设置缓存时间
-
-`time`单位为秒，设置缓存的话，在这个时间内再次执行相同条件的查询，将直接返回缓存的数据。
-
-示例：`this.cache(600);` // 设置缓存时间为10分钟
-
-> 方法：**join(table, on, type='left')** 设置表连接
-
-假如设置文章表和用户表以用户id为条件连接：
-
-示例：`this.table('article').join('user', 'article.user_id=user.id', 'left');` // from article article left join user user on article=user.id
-
-> 方法：**getSql(fetch = true)** 设置是否返回sql语句
-
-设置后，调用查询方法不会再进行真正的查询，而是直接返回编译后的sql语句字符串。
-
-示例：`this.table('user').getSql().select();` // 返回:'select * from user'
-
-> 方法：**async select(condition)** 查询多条数据
-
-如果`condition`不为空，则会清空前面使用`where`方法设置的查询条件，然后以`condition`为参数调用一次`where`方法。
-
-示例：`this.where({name: 'aaa', sex: 1}).where({id: 1}).select({id: 2});` // 等效于：this.where({id: 2}).select();
-
-> 方法：**async find(condition)** 查询单条数据
-
-使用方法同`select()`
-
-> 方法：**async value(field)** 查询单个值
-
-返回单条数据里某个字段的值，假如查询user表id为1的用户的年龄值：
-
-示例：`this.table('user').where({id: 1}).value('age');` // 返回age值
-
-> 方法：**async count(field='*')** 查询记录数
-
-以某个字段查询记录总数，假如查询user表age为18的用户数：
-
-示例：`this.table('user').where({age: 18}).count();` // 返回记录总数
-
-> 方法：**async max(field)** 查询最大值
-
-> 方法：**async min(field)** 查询最小值
-
-> 方法：**async avg(field)** 查询平均值
-
-> 方法：**async sum(field)** 对列求和
-
-> 方法：**async column(field, key)** 获取一列数据
-
-如果设置key则获取一列键值对
-
-示例1：`this.column('age');` // [16, 18, 20] 数字为年龄
-
-示例2：`this.column('age'，'id');` // {1: 16, 2: 18, 3: 20} 数字为年龄,1 2 3为id值
-
-> 方法：**async pagination({page, page_size, pagination})** 分页查询并返回分页实例
-
-相当于`page()+Pagination`类分页，如果传入`pagination`实例，则以这个实例渲染分页，否则会自动创建一个分页实例。如果没有传page、page_size，会使用`pagination`实例的`page()`方法`pageSize()`自动生成。
-
-示例：`this.pagination();` // 返回[data_list, pagination]
-
-> 方法：**data(data)** 设置写入数据
-
-此方法用于更新或写入数据，提前设置需要的数据，支持多次调用
-
-示例：`this.data({age: 18}).data({sex: 1}).insert();` // 返回[data_list, pagination]
-
-> 方法：**allowField(field = true)** 设置过滤非数据表字段
-
-更新或写入数据时，会过滤掉非数据表里的字段
-
-> 方法：**async insert(data)** 插入一条数据
-
-如果data参数不为空，会清除前面使用`data()`方法设置的数据，并以此处传入数据为准
-
-> 方法：**async update(data, condition)** 更新数据
-
-如果`data`参数不为空，会清除前面使用`data()`方法设置的数据，并以此处传入数据为准。如果`condition`参数不为空，会清除前面设置`where()`设置的条件
-
-> 方法：**async inc(field, step)** 数据表字段自增
-
-设置字段field自增，step默认为1
-
-> 方法：**async dec(field, step)** 数据表字段自减
-
-设置字段field自减，step默认为1
-
-> 方法：**async exp(field, step)** 数据表字段执行自定义方法
-
-> 方法：**async delete(condition)** 删除数据
-
-如果`condition`参数不为空，会清除前面设置`where()`设置的条件，并以此处传入条件为准。
-
-> 方法：**async execute(sql, params, reset=true)** 解析并执行sql语句
-
-执行sql语句查询
-
-> 方法：**format(sql, params)** 解析sql语句
-
-> 方法：**async tableInfo(table)** 获取表信息
-
-> 方法：**async tableField(table)** 获取表字段信息
-
-> 方法：**deleteCache()** 清空数据库查询缓存
-
-### Model模型类
-
-> 属性：**db** 模型的db实例
-
-每个模型文件，会懒自动创建一个独有的db实例
-
-> 属性：**table** 数据表名字，默认为模型文件名
-
-> 属性：**pk** 数据表主键字段，默认为`id`
-
-> 方法：**async add(data)** 同Db类insert方法
-
-> 方法：**async save(data, condition = {})** 智能调用Db类insert或update方法
-
-当data含有主键字段或condition不为空，则执行db实例`update()`方法，否则执行`insert()`方法
-
-> 方法：**async del(condition)** 同Db类delete方法
-
-> 方法：**async get(condition)** 同Db类find方法
-
-> 方法：**async all(condition)** 同Db类select方法
-
-### Pagination分页类
-
-> 方法：**init(options)** 初始化
-
-options参数默认继承自`./config/page.js`或框架`config.page`参数，框架page参数如下：
-
-```javascript
-const page = {
-    page_key    : 'page', // 默认分页标识
-    key_origin    : 'query', // query 或 params
-    page_size   : 10, // 默认分页大小
-    page_length : 5, // 默认分页长度，数字页码链接数量
-
-    //网址规则，可为空，可为路由名字，可用参数：页码${page}
-    //样例：':name'
-    //样例：'/list_${page}.html'
-    url_page    : '',
-    url_index   : '',
-
-    //模块样式 可用参数：网址${url}，页码${page}，总数${total_page}，总页数${total_page}
-    index_tpl   : '<li class="index"><a href="${url}">首页</a></li>',
-    end_tpl     : '<li class="end"><a href="${url}">末页</a></li>',
-    prev_tpl    : '<li class="prev"><a href="${url}">上一页</a></li>',
-    next_tpl    : '<li class="next"><a href="${url}">下一页</a></li>',
-    list_tpl    : '<li><a href="${url}">${page}</a></li>',
-    active_tpl  : '<li class="active"><a href="${url}">${page}</a></li>',
-    info_tpl    : '<span class="info">共${total_page}页，${total}条记录</span>',
-
-    //渲染模版
-    template   : '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
-}
-```
-- key_origin：设置分页参数获取位置，url或params
-- page_key：设置分页标识，即设置或获取当前分页的字段
-- url_page、url_index：设置生成的分页url模板或规则，网址规则可以为路由名字，可用参数为`${page}`
-
-> 方法：**page(page)** 设置或获取当前页
-
-> 方法：**pageSize(page_size)** 设置或获取分页大小
-
-> 方法：**total(total)** 设置或获取总数
-
-> 方法：**render(total, page, page_size)** 生成分页html代码
-
-传参，可以快速设置page、page_size、total
-
-### View模板引擎类
-
-> 方法：**assign(name, value)** 赋值模版变量，用法参考Controller类
-
-> 方法：**data(name)** 获取已赋模版变量，用法参考Controller类
-
-> 方法：**async fetch(template)** 渲染模板文件并输出，用法参考Controller类
-
-> 方法：**async load(template)** 加载并输出模板文件，用法参考Controller类
-
-> 方法：**async render(data)** 渲染字符串模板，用法参考Controller类
-
-> 方法：**setFilter(fun_obj, fun)** 动态设置模版函数
-
-设置一个或多个模板函数：
-
-示例1：`this.setFilter('sum', (a, b) => {return a + b;});` // 设置一个函数sum
-
-示例2：`this.setFilter({'sum': (a, b) => {return a + b;}, 'fun2': () => {}});` // 同时设置sum、fun2两个函数，设置后可以在模板中使用
-
-> 提示：View类初始化时，默认会设置一个`url`的模板函数，即在模板文件里可以直接使用`url`函数生成网址，示例：
-
-```javascript
-// 首页模板代码
-{{url('user')}}
-
-// 生成网址(单应用模式)
-'/index/user'
-```
-`url`函数具体用法，请参考Url类的`build`方法
-
-> 方法：**setFolder(view_folder)** 动态设置模版函数
-
-> 方法：**setDepr(view_depr)** 动态设置文件分割符
-
-> 本框架默认使用的模板引擎为`art-template`，关于模板语法，可以参考[art-template文档](http://aui.github.io/art-template/zh-cn/docs/ "art-template文档")
-
-### Logger日志类
-
-> 说明：日志类是一个静态类，方法都为静态方法，但同时也支持new创建一个新的静态实例。
-
-> 提示：目前日志类输出没有具体的代码实现，只是数据格式化后，用node自带log打印。
-
-> 方法：**static log(msg, level='info')** 输出日志
-
-> 方法：**static error(...args)** 输出错误日志
-
-> 方法：**static warning(...args)** 输出错误日志
-
-> 方法：**static info(...args)** 输出错误日志
-
-> 方法：**static debug(...args)** 输出错误日志
-
-> 方法：**static sql(...args)** 输出错误日志
-
-> 方法：**static http(...args)** 输出错误日志
-
-> 方法：**static setHandle(...args)** 输出错误日志
-
-### Cookie类
-
-> 方法：**set(key, value, options)** 设置cookie
-
-options默认继承`config.cookie`参数
-
-> 方法：**get(key)** 获取cookie
-
-> 方法：**delete(key)** 删除一个cookie
-
-> 方法：**all()** 获取所有cookie
-
-> 方法：**clear()** 清除所有cookie
-
-> 方法：**keys()** 获取所有cookie的key
-
-### Response跳转响应类
-
-> 方法：**show(data)** 渲染模板文件并输出，用法参考Controller类
-
-> 方法：**redirect(url, status = 302)** 302或其他跳转，用法参考Controller类
-
-> 方法：**success(msg='操作成功！', name)** 成功跳转或输出，用法参考Controller类
-
-> 方法：**error(msg='操作失败！', name)** 错误跳转或输出，用法参考Controller类
-
-> 方法：**jump(msg, url, state=1)** 跳转或输出
-
-> 方法：**exception(err)** 输出异常页面
-
-> 方法：**wait(time)** 设置页面跳转时等待时间
-
-### Upload上传类
-
-> 注意：文件上传，需要先开启`config.app.koa_body`参数，具体设置可参考[koa-body文档](https://github.com/koajs/koa-body#readme)
-
-> 方法：**file(file)** 设置file文件
-
-当参数`file`为字符串时，会调用`getFile(name)`方法获取上传文件并配置，如果为文件，则直接赋值。
-
-> 方法：**getFile(name)** 获取一个上传文件
-
-> 方法：**validate(rule={})** 设置文件验证规则参数
-
-- rule.size，文件大小限制
-- rule.ext，文件后缀
-- rule.type，文件MIME类型
-- rule.size，文件大小限制
-- 默认会对图片后缀的文件做图片MIME验证
-
-> 方法：**rule(name)** 设置文件保存名字或规则
-
-参数name为字符串或函数，不传的话按内部规则。
-
-> 方法：**checkExt(ext)** 验证文件后缀
-
-> 方法：**checkType(type)** 验证文件MIME
-
-> 方法：**checkImg()** 验证图片文件
-
-> 方法：**check()** 对设置的规则执行验证
-
-> 方法：**getError()** 获取验证错误或上传文件失败信息
-
-> 方法：**async save(dir)** 保存上传文件
-
-参数dir为文件保存目录，相对应用的根目录。内部会自动执行`check()`方法。
-
-示例1：`await this.file('img').save('upload');` // 会将上传的图片保存到upload目录下
-
-示例2：`await this.file('img').validate({size: 1024, ext: 'png', type: 'png'}).save('upload');` // 设置只能上传小于1M的png图片
-
-上传成功返回参数：
-
-```javascript
-return {
-    filename, // 保存后的文件名
-    extname, // 文件后缀名
-    savename, // 除去上传目录的完成名字
-    filepath, // 文件保存目录
-    name, // 文件原始名字
-    size, // 文件大小
-    mimetype, // mimetype
-    hash // hash
-};
-```
-
-### Url网址解析类
-
-> 方法：**build(url='', vars, ext='', domain='')** 生成url网址
-
-Url类build方法，会根据当前访问url参数，智能生成需要的网址，假如单应用模式访问`127.0.0.1/user/info`
-
-示例1：`this.build()` // '/user/list'
-
-示例2：`this.build('list')` // '/user/list'
-
-示例3：`this.build('article/list')` // '/article/list'
-
-示例4：`this.build('list', {type: 'hot', order: 'click'})` // '/user/list?type=host&order=click'
-
-示例5：`this.build('list', '.html')` // '/user/list.html'
-
-示例6：`this.build('list', '.html', 'localhost')` // 'localhost/user/list.html'
-
-如果`url`参数包含`/`前缀，则直接做为网址使用
-
-示例7：`this.build('/list', {type: 'hot'})` // '/list?type=host'
-
-如果自定义的有路由地址，通过路由名字可以反向编译地址，假如有路由定义`./config/routes.js`
-
-```javascript
-route = [
-    {url: '/article/:id.html', path: 'article/article', name: 'article'},
-];
-
-module.exports = route;
-```
-这是一个自定义文章页路由地址，当访问`127.0.0.1/article/123.html`时会匹配到这个地址，并且这条路由的名字`name`为`article`，在url反向编译路由时，通过带`:`号的名字来定义：
-
-示例8：`this.build(':article', {id: 456})` // '/article/456.html'
-
-### Context配置上下文类
-
-> 属性：**ctx** 整个框架的上下文，具体参数，可以参考[Koa上下文(Context)ctx文档](https://www.itying.com/koa/)
-
 ### config配置
 
-应用的配置可以为`.config/`目录+`.config/xxx.js`文件的形式，也可以直接写到一个`.config.js`文件里。
+应用的配置可以为`./config/`目录+`./config/xxx.js`文件的形式，也可以直接写到一个`./config.js`文件里。
 
 应用配置不用每项都设置，只设置自己需要改的，默认会继承框架的默认配置，在控制器、中间件、模板类、模型类里都可以通过`this.$config.xxx`使用。
 
-- app配置`.config/app.js`：
+- app配置`./config/app.js`：
 ```javascript
 const app = {
     app_debug: true, // 调试模式
@@ -761,7 +230,7 @@ const app = {
 }
 module.exports = app;
 ```
-- 模板配置`.config/view.js`：
+- 模板配置`./config/view.js`：
 ```javascript
 const view = {
     view_folder: 'view', // 模板目录名
@@ -772,7 +241,7 @@ const view = {
 }
 module.exports = view;
 ```
-- 数据库配置`.config/db.js`：可以配置多个，方便程序里切换使用。
+- 数据库配置`./config/db.js`：可以配置多个，方便程序里切换使用。
 ```javascript
 const db = {
     default: {
@@ -788,7 +257,7 @@ const db = {
 }
 module.exports = db;
 ```
-- 日志配置`.config/log.js`：log_handle可以自定义日志handle
+- 日志配置`./config/log.js`：log_handle可以自定义日志handle
 ```javascript
 const log = {
     log_level: [], // [error, warning, info, debug, http, sql]
@@ -796,7 +265,7 @@ const log = {
 }
 module.exports = log;
 ```
-- 缓存配置`.config/cache.js`：
+- 缓存配置`./config/cache.js`：
 ```javascript
 const cache = {
     cache_time: 60 * 60 * 24, // 默认缓存时间（1天），为空或false则为10年
@@ -804,7 +273,7 @@ const cache = {
 }
 module.exports = cache;
 ```
-- 分页配置`.config/page.js`：
+- 分页配置`./config/page.js`：
 ```javascript
 const page = {
     page_key    : 'page', // 默认分页标识
@@ -832,7 +301,7 @@ const page = {
 }
 module.exports = page;
 ```
-- 跳转模板配置`.config/tpl.js`：模板可以配置为自定义的
+- 跳转模板配置`./config/tpl.js`：模板可以配置为自定义的
 ```javascript
 const tpl = {
     jump: require('./tpl/jump'), // 跳转模板
@@ -840,7 +309,7 @@ const tpl = {
 }
 module.exports = tpl;
 ```
-- 自定义配置`.config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
+- 自定义配置`./config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
 ```javascript
 const self = {
     option1: ''
@@ -849,7 +318,7 @@ const self = {
 }
 module.exports = self;
 ```
-- 路由配置`.config/routes.js`：
+- 路由配置`./config/routes.js`：
 路由功能基于`@koa/router`开发，关于url匹配规则可以参考官方文档：[文档地址](https://www.npmjs.com/package/@koa/router)
 
 > 本框架默认内置 `应用/控制器/方法` 的全局路由，即如果不需要定制url，可以直接访问，无需配置路由。

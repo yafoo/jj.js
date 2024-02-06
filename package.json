@@ -1,10 +1,9 @@
 {
   "name": "jj.js",
-  "version": "0.8.8",
-  "description": "A simple and lightweight MVC framework built on nodejs+koa2",
+  "version": "0.9.0",
+  "description": "A super simple lightweight NodeJS MVC framework（一个超级简单轻量的NodeJS MVC框架）",
   "main": "jj.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yafoo/jj.js.git"
@@ -21,13 +20,16 @@
   },
   "homepage": "https://github.com/yafoo/jj.js#readme",
   "dependencies": {
-    "@koa/router": "^10.1.1",
+    "@koa/router": "^12.0.1",
     "art-template": "^4.13.2",
     "escape-html": "^1.0.3",
     "is-class": "0.0.9",
-    "koa": "^2.13.4",
+    "koa": "^2.15.0",
     "koa-body": "^5.0.0",
     "koa-static": "^5.0.0",
     "mysql": "^2.18.1"
+  },
+  "engines": {
+    "node": ">= 12.17.0"
   }
 }
