@@ -1,20 +1,20 @@
 //------------------系统核心库------------------
 /**
  * @typedef {Object} Core
- * @property {typeof import('./app')} App
- * @property {typeof import('./cache')} Cache
- * @property {typeof import('./context')} Context
- * @property {typeof import('./controller')} Controller
- * @property {typeof import('./cookie')} Cookie
- * @property {typeof import('./db')} Db
- * @property {typeof import('./logger')} Logger
- * @property {typeof import('./middleware')} Middleware
- * @property {typeof import('./model')} Model
- * @property {typeof import('./pagination')} Pagination
- * @property {typeof import('./response')} Response
- * @property {typeof import('./upload')} Upload
- * @property {typeof import('./url')} Url
- * @property {typeof import('./view')} View
+ * @property {typeof import('./lib/app')} App
+ * @property {typeof import('./lib/cache')} Cache
+ * @property {typeof import('./lib/context')} Context
+ * @property {typeof import('./lib/controller')} Controller
+ * @property {typeof import('./lib/cookie')} Cookie
+ * @property {typeof import('./lib/db')} Db
+ * @property {typeof import('./lib/logger')} Logger
+ * @property {typeof import('./lib/middleware')} Middleware
+ * @property {typeof import('./lib/model')} Model
+ * @property {typeof import('./lib/pagination')} Pagination
+ * @property {typeof import('./lib/response')} Response
+ * @property {typeof import('./lib/upload')} Upload
+ * @property {typeof import('./lib/url')} Url
+ * @property {typeof import('./lib/view')} View
  * @property {Utils} utils
  */
 
@@ -135,8 +135,8 @@
 
 //------------------分页类--------------------
 /**
- * @typedef {typeof import('./pagination')} Pagination - 分页类
- * @typedef {typeof import('./pagination').prototype} PaginationInstance - 分页类实例
+ * @typedef {typeof import('./lib/pagination')} Pagination - 分页类
+ * @typedef {typeof import('./lib/pagination').prototype} PaginationInstance - 分页类实例
  */
 
 
@@ -184,11 +184,11 @@
 //------------------系统工具--------------------
 /**
  * @typedef {Object} Utils
- * @property {typeof import('./utils/date')} date
- * @property {typeof import('./utils/error')} error
- * @property {typeof import('./utils/fs')} fs
- * @property {typeof import('./utils/md5')} md5
- * @property {typeof import('./utils/str')} str
+ * @property {typeof import('./lib/utils/date')} date
+ * @property {typeof import('./lib/utils/error')} error
+ * @property {typeof import('./lib/utils/fs')} fs
+ * @property {typeof import('./lib/utils/md5')} md5
+ * @property {typeof import('./lib/utils/str')} str
  */
 
 
@@ -200,84 +200,85 @@
 
 
 //------------------Ctx系统基类--------------------
+/**
+ * @class Ctx
+ */
 class Ctx {
-    constructor() {
-        /**
-         * @desc 系统缓存类
-         * @type {typeof import('./cache')}
-         */
-        this.$cache;
+    /**
+     * @desc 系统缓存类
+     * @type {typeof import('./lib/cache')}
+     */
+    $cache;
 
-        /**
-         * @type {typeof import('./context').prototype}
-         */
-        this.$context;
+    /**
+     * @type {typeof import('./lib/context').prototype}
+     */
+    $context;
 
-        /**
-         * @type {typeof import('./controller').prototype}
-         */
-        this.$controller;
+    /**
+     * @type {typeof import('./lib/controller').prototype}
+     */
+    $controller;
 
-        /**
-         * @type {typeof import('./cookie').prototype}
-         */
-        this.$cookie;
+    /**
+     * @type {typeof import('./lib/cookie').prototype}
+     */
+    $cookie;
 
-        /**
-         * @type {typeof import('./db').prototype}
-         */
-        this.$db;
+    /**
+     * @type {typeof import('./lib/db').prototype}
+     */
+    $db;
 
-        /**
-         * @type {typeof import('./logger')}
-         */
-        this.$logger;
+    /**
+     * @type {typeof import('./lib/logger')}
+     */
+    $logger;
 
-        /**
-         * @type {typeof import('./middleware').prototype}
-         */
-        this.$middleware;
+    /**
+     * @type {typeof import('./lib/middleware').prototype}
+     */
+    $middleware;
 
-        /**
-         * @type {typeof import('./model').prototype}
-         */
-        this.$model;
+    /**
+     * @type {typeof import('./lib/model').prototype}
+     */
+    $model;
 
-        /**
-         * @type {typeof import('./pagination').prototype}
-         */
-        this.$pagination;
+    /**
+     * @type {typeof import('./lib/pagination').prototype}
+     */
+    $pagination;
 
-        /**
-         * @type {typeof import('./response').prototype}
-         */
-        this.$response;
+    /**
+     * @type {typeof import('./lib/response').prototype}
+     */
+    $response;
 
-        /**
-         * @type {typeof import('./upload').prototype}
-         */
-        this.$upload;
+    /**
+     * @type {typeof import('./lib/upload').prototype}
+     */
+    $upload;
 
-        /**
-         * @type {typeof import('./url').prototype}
-         */
-        this.$url;
+    /**
+     * @type {typeof import('./lib/url').prototype}
+     */
+    $url;
 
-        /**
-         * @type {typeof import('./view').prototype}
-         */
-        this.$view;
+    /**
+     * @type {typeof import('./lib/view').prototype}
+     */
+    $view;
 
-        /**
-         * @type {Utils}
-         */
-        this.$utils;
+    /**
+     * @type {Utils}
+     */
+    $utils;
 
-        /**
-         * @type {import('./config')}
-         */
-        this.$config;
-    }
+    /**
+     * @type {Config}
+     */
+    $config;
 }
 
 /**
