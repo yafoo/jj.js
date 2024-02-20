@@ -1,20 +1,74 @@
 //------------------系统核心库------------------
 /**
+ * @typedef {typeof import('./lib/app')} App
+ * @typedef {typeof import('./lib/cache')} Cache
+ * @typedef {typeof import('./lib/context')} Context
+ * @typedef {typeof import('./lib/controller')} Controller
+ * @typedef {typeof import('./lib/cookie')} Cookie
+ * @typedef {typeof import('./lib/db')} Db
+ * @typedef {typeof import('./lib/logger')} Logger
+ * @typedef {typeof import('./lib/middleware')} Middleware
+ * @typedef {typeof import('./lib/model')} Model
+ * @typedef {typeof import('./lib/pagination')} Pagination
+ * @typedef {typeof import('./lib/response')} Response
+ * @typedef {typeof import('./lib/upload')} Upload
+ * @typedef {typeof import('./lib/url')} Url
+ * @typedef {typeof import('./lib/view')} View
+ */
+
+/**
+ * @typedef {typeof import('./lib/app').prototype} AppInstance
+ * @typedef {typeof import('./lib/context').prototype} ContextInstance
+ * @typedef {typeof import('./lib/controller').prototype} ControllerInstance
+ * @typedef {typeof import('./lib/cookie').prototype} CookieInstance
+ * @typedef {typeof Ctx.prototype} CtxInstance
+ * @typedef {typeof import('./lib/db').prototype} DbInstance
+ * @typedef {typeof import('./lib/middleware').prototype} MiddlewareInstance
+ * @typedef {typeof import('./lib/model').prototype} ModelInstance
+ * @typedef {typeof import('./lib/pagination').prototype} PaginationInstance
+ * @typedef {typeof import('./lib/response').prototype} ResponseInstance
+ * @typedef {typeof import('./lib/upload').prototype} UploadInstance
+ * @typedef {typeof import('./lib/url').prototype} UrlInstance
+ * @typedef {typeof import('./lib/view').prototype} ViewInstance
+ */
+
+/**
  * @typedef {Object} Core
- * @property {typeof import('./lib/app')} App
- * @property {typeof import('./lib/cache')} Cache
- * @property {typeof import('./lib/context')} Context
- * @property {typeof import('./lib/controller')} Controller
- * @property {typeof import('./lib/cookie')} Cookie
- * @property {typeof import('./lib/db')} Db
- * @property {typeof import('./lib/logger')} Logger
- * @property {typeof import('./lib/middleware')} Middleware
- * @property {typeof import('./lib/model')} Model
- * @property {typeof import('./lib/pagination')} Pagination
- * @property {typeof import('./lib/response')} Response
- * @property {typeof import('./lib/upload')} Upload
- * @property {typeof import('./lib/url')} Url
- * @property {typeof import('./lib/view')} View
+ * @property {App} App
+ * @property {Cache} Cache
+ * @property {Context} Context
+ * @property {Controller} Controller
+ * @property {Cookie} Cookie
+ * @property {Ctx} Ctx
+ * @property {Db} Db
+ * @property {Logger} Logger
+ * @property {Middleware} Middleware
+ * @property {Model} Model
+ * @property {Pagination} Pagination
+ * @property {Response} Response
+ * @property {Upload} Upload
+ * @property {Url} Url
+ * @property {View} View
+ * @property {Utils} utils
+ */
+
+/**
+ * @typedef {Object} $
+ * @property {(App & AppInstance)} app
+ * @property {Cache} cache
+ * @property {ContextInstance} context
+ * @property {ControllerInstance} controller
+ * @property {CookieInstance} cookie
+ * @property {CtxInstance} ctx
+ * @property {DbInstance} db
+ * @property {Logger} logger
+ * @property {MiddlewareInstance} middleware
+ * @property {ModelInstance} model
+ * @property {PaginationInstance} pagination
+ * @property {ResponseInstance} response
+ * @property {UploadInstance} upload
+ * @property {UrlInstance} url
+ * @property {ViewInstance} view
  * @property {Utils} utils
  */
 
@@ -63,7 +117,7 @@
 /**
  * @callback LogHandle - 日志驱动
  * @param {string} level - 日志级别
- * @param {array} args - 日志数据，支持多个，支持对象
+ * @param {...any} args - 日志数据，支持多个，支持对象
  */
 
 /**
@@ -133,13 +187,6 @@
  */
 
 
-//------------------分页类--------------------
-/**
- * @typedef {typeof import('./lib/pagination')} Pagination - 分页类
- * @typedef {typeof import('./lib/pagination').prototype} PaginationInstance - 分页类实例
- */
-
-
 //------------------数据库类--------------------
 /**
  * @typedef {import('mysql').Pool} Pool - 连接池
@@ -192,10 +239,10 @@
  */
 
 
-//------------------系统Context--------------------
+//------------------Koa Context--------------------
 /**
- * @typedef {import('koa').Context} Context
- * @typedef {import('koa').Middleware} Middleware
+ * @typedef {import('koa').Context} KoaCtx - Koa ctx
+ * @callback AsyncNext - 中间件函数
  */
 
 
@@ -204,80 +251,52 @@
  * @class Ctx
  */
 class Ctx {
-    /**
-     * @desc 系统缓存类
-     * @type {typeof import('./lib/cache')}
-     */
+    /** @type {$} */
+    $;
+
+    /** @type {Cache} */
     $cache;
 
-    /**
-     * @type {typeof import('./lib/context').prototype}
-     */
+    /** @type {(Context & ContextInstance)} */
     $context;
 
-    /**
-     * @type {typeof import('./lib/controller').prototype}
-     */
+    /** @type {(Controller & ControllerInstance)} */
     $controller;
 
-    /**
-     * @type {typeof import('./lib/cookie').prototype}
-     */
+    /** @type {(Cookie & CookieInstance)} */
     $cookie;
 
-    /**
-     * @type {typeof import('./lib/db').prototype}
-     */
+    /** @type {(Db & DbInstance)} */
     $db;
 
-    /**
-     * @type {typeof import('./lib/logger')}
-     */
+    /** @type {Logger} */
     $logger;
 
-    /**
-     * @type {typeof import('./lib/middleware').prototype}
-     */
+    /** @type {(Middleware & MiddlewareInstance)} */
     $middleware;
 
-    /**
-     * @type {typeof import('./lib/model').prototype}
-     */
+    /** @type {(Model & ModelInstance)} */
     $model;
 
-    /**
-     * @type {typeof import('./lib/pagination').prototype}
-     */
+    /** @type {(Pagination & PaginationInstance)} */
     $pagination;
 
-    /**
-     * @type {typeof import('./lib/response').prototype}
-     */
+    /** @type {(Response & ResponseInstance)} */
     $response;
 
-    /**
-     * @type {typeof import('./lib/upload').prototype}
-     */
+    /** @type {(Upload & UploadInstance)} */
     $upload;
 
-    /**
-     * @type {typeof import('./lib/url').prototype}
-     */
+    /** @type {(Url & UrlInstance)} */
     $url;
 
-    /**
-     * @type {typeof import('./lib/view').prototype}
-     */
+    /** @type {(View & ViewInstance)} */
     $view;
 
-    /**
-     * @type {Utils}
-     */
+    /** @type {Utils} */
     $utils;
 
-    /**
-     * @type {Config}
-     */
+    /** @type {Config} */
     $config;
 }
 
