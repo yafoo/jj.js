@@ -1,12 +1,12 @@
 /**
  * jj.js核心库<br/>
- * {App, Controller, Db, Model, Pagination, View, Logger, Cookie, Response, Upload, Url, Middleware, Cache, Context, View, utils}
+ * {App, Cache, Context, Controller, Cookie, Ctx, Db, Logger, Middleware, Model, Pagination, Response, Upload, Url, View, utils}
  * @module core
- * @type {import('./lib/types').Core}
+ * @type {import('./types').Core}
  */
 module.exports = new Proxy({}, {
     get: (target, prop) => {
-        if(prop in target || typeof prop == 'symbol' || prop == 'inspect'){
+        if(prop in target || typeof prop == 'symbol' || ['inspect', 'router', 'run', 'types'].includes(prop)) {
             return target[prop];
         }
         prop = prop.toLowerCase();

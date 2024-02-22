@@ -83,8 +83,8 @@
  * @property {string} [default_action=index] - 默认方法
  * @property {string} [common_app=common] - 公共应用，存放公共模型及逻辑
  * @property {string} [controller_folder=controller] - 控制器目录名
- * @property {(string|boolean)} [static_dir=''] - 静态文件目录，相对于应用根目录，为空或false时，关闭静态访问
- * @property {(string|boolean|null|object)} [koa_body=null] - koa-body配置参数，为''、null、false时，关闭koa-body
+ * @property {string} [static_dir=''] - 静态文件目录，相对于应用根目录，为空时，关闭静态访问
+ * @property {?object} [koa_body=null] - koa-body配置参数，为null或空时，关闭koa-body
  * @property {string} [base_dir] - 应用根目录（会自动计算）
  */
 
