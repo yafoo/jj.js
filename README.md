@@ -14,7 +14,7 @@ A super simple lightweight NodeJS MVC framework（一个超级简单轻量的Nod
 2. 系统类库、用户类库都支持自动加载、懒加载、自动生成单实例
 3. 支持应用级、路由级、控制器级三级中间件，方便插件及二次开发
 4. 支持单应用和多应用两种运行模式
-5. jsdoc支持，完善vscode代码提示
+5. 基于jsdoc，提供完整的代码提示。支持自动生成应用端jsdoc文件
 
 ### 项目地址
 
