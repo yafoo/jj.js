@@ -27,9 +27,7 @@
     "koa": "^2.15.0",
     "koa-body": "^5.0.0",
     "koa-static": "^5.0.0",
-    "mysql": "^2.18.1"
-  },
-  "devDependencies": {
+    "mysql": "^2.18.1",
     "watch": "^1.0.2"
   },
   "engines": {
