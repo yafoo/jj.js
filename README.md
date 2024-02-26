@@ -6,15 +6,15 @@ A super simple lightweight NodeJS MVC framework（一个超级简单轻量的Nod
 
 ## 项目介绍
 
-本框架依赖koa2、@koa/router、art-template、mysql，基于proxy实现了代码自动加载及懒加载技术，最低运行依赖仅仅为koa和koa-router，非常轻量。
+无论什么语言什么框架的程序，类库的使用都离不开require、import、include等导入模块，不用时，还得删除。而本框架基于proxy实现了类库自动加载、懒加载和Class自动实例化及单例化技术，所有的类库，想用直接调用，系统会自动导入。
 
 ### 项目特性
 
-1. 系统架构模仿Thinkphp5，很容易上手
-2. 系统类库、用户类库都支持自动加载、懒加载、自动生成单实例
+1. 系统架构为经典的MVC模式，模仿Thinkphp5，很容易上手
+2. 系统类库、用户类库都支持自动加载、懒加载、Class自动生成单实例
 3. 支持应用级、路由级、控制器级三级中间件，方便插件及二次开发
 4. 支持单应用和多应用两种运行模式
-5. 基于jsdoc，提供完整的代码提示。支持自动生成应用端jsdoc文件
+5. 基于jsdoc，提供完整的代码提示，自动生成应用端types类型文件
 
 ### 项目地址
 
@@ -230,17 +230,6 @@ const app = {
 }
 module.exports = app;
 ```
-- 模板配置`./config/view.js`：
-```javascript
-const view = {
-    view_folder: 'view', // 模板目录名
-    view_depr: '/', // 模版文件名分割符，'/'代表二级目录
-    view_ext: '.htm', // 模版文件后缀
-    view_engine: 'art-template', // 默认模版引擎，字符串或引擎类，咱不支持更换
-    view_filter: {}, // 模版函数，配置注入模板的函数，默认会自动注入url函数
-}
-module.exports = view;
-```
 - 数据库配置`./config/db.js`：可以配置多个，方便程序里切换使用。
 ```javascript
 const db = {
@@ -257,67 +246,7 @@ const db = {
 }
 module.exports = db;
 ```
-- 日志配置`./config/log.js`：log_handle可以自定义日志handle
-```javascript
-const log = {
-    log_level: [], // [error, warning, info, debug, http, sql]
-    log_handle: function(msg, level) {console.log(`[${format('YY-mm-dd HH:ii:ss')}] [${level}] ${typeof msg == 'String' ? msg : JSON.stringify(msg)}`);} //function(msg, level) {}
-}
-module.exports = log;
-```
-- 缓存配置`./config/cache.js`：
-```javascript
-const cache = {
-    cache_time: 60 * 60 * 24, // 默认缓存时间（1天），为空或false则为10年
-    clear_time: undefined // (undefined: 一天清理一次, 0: 关闭自动清理, >0: 为自动清理周期)
-}
-module.exports = cache;
-```
-- 分页配置`./config/page.js`：
-```javascript
-const page = {
-    page_key    : 'page', // 默认分页标识
-    key_origin    : 'query', // query 或 params
-    page_size   : 10, // 默认分页大小
-    page_length : 5, // 默认分页长度，数字页码链接数量
 
-    //网址规则，可为空，可为路由名字，可用参数：页码${page}
-    //样例：':name'
-    //样例：'/list_${page}.html'
-    url_page    : '',
-    url_index   : '',
-
-    //模块样式 可用参数：网址${url}，页码${page}，总数${total_page}，总页数${total_page}
-    index_tpl   : '<li class="index"><a href="${url}">首页</a></li>',
-    end_tpl     : '<li class="end"><a href="${url}">末页</a></li>',
-    prev_tpl    : '<li class="prev"><a href="${url}">上一页</a></li>',
-    next_tpl    : '<li class="next"><a href="${url}">下一页</a></li>',
-    list_tpl    : '<li><a href="${url}">${page}</a></li>',
-    active_tpl  : '<li class="active"><a href="${url}">${page}</a></li>',
-    info_tpl    : '<span class="info">共${total_page}页，${total}条记录</span>',
-
-    //渲染模版
-    template   : '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
-}
-module.exports = page;
-```
-- 跳转模板配置`./config/tpl.js`：模板可以配置为自定义的
-```javascript
-const tpl = {
-    jump: require('./tpl/jump'), // 跳转模板
-    exception: require('./tpl/exception') //  异常页面模板
-}
-module.exports = tpl;
-```
-- 自定义配置`./config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
-```javascript
-const self = {
-    option1: ''
-    option2: ''
-    ...
-}
-module.exports = self;
-```
 - 路由配置`./config/routes.js`：
 路由功能基于`@koa/router`开发，关于url匹配规则可以参考官方文档：[文档地址](https://www.npmjs.com/package/@koa/router)
 
@@ -338,17 +267,22 @@ module.exports = routes;
 ```
 > 注意：本路由配置示例前两条规则为常规用法，后面的非常规用法，不建议使用。如果是单应用模式，可以去掉path参数里的app。
 
+- 自定义配置`./config/self.js`：自定义配置同样可以直接通过`this.$config.self`使用。
+```javascript
+const self = {
+    option1: ''
+    option2: ''
+    ...
+}
+module.exports = self;
+```
+- 其他配置项，请参考系统配置文件`jj.js/lib/config.js`
+
 ### 编码命名规范
 
 类名使用大驼峰，方法名使用小驼峰，私有方法使用下划线前缀。
 控制器文件名使用小写下划线。
 
-## 总结
-
-通过以上文档，可以看到：
-1. jj.js是一个轻量的mvc框架，几乎所有文件不使用就不会调用。
-2. 同时也是个功能强大的框架，支持应用级、路由级、控制器级三级中间件。
-3. 类库自动加载，只要是继承自`Ctx`的类库，都可以在方法内使用包含`$`前缀的属性自动加载其他资源。
 
 ## 应用案例
 
