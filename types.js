@@ -11,13 +11,13 @@
  * @typedef {typeof import('./lib/model')} Model
  * @typedef {typeof import('./lib/pagination')} Pagination
  * @typedef {typeof import('./lib/response')} Response
+ * @typedef {typeof import('./lib/storage')} Storage
  * @typedef {typeof import('./lib/upload')} Upload
  * @typedef {typeof import('./lib/url')} Url
  * @typedef {typeof import('./lib/view')} View
  */
 
 /**
- * @typedef {typeof import('./lib/app').prototype} AppInstance
  * @typedef {typeof import('./lib/context').prototype} ContextInstance
  * @typedef {typeof import('./lib/controller').prototype} ControllerInstance
  * @typedef {typeof import('./lib/cookie').prototype} CookieInstance
@@ -50,12 +50,14 @@
  * @property {Url} Url
  * @property {View} View
  * @property {Utils} utils
+ * @property {Config} config
+ * @property {Storage} storage
  */
 
 /**
  * @typedef {Object} $
- * @property {(App & AppInstance)} app
  * @property {Cache} cache
+ * @property {Config} config
  * @property {ContextInstance} context
  * @property {ControllerInstance} controller
  * @property {CookieInstance} cookie
