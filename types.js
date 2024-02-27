@@ -86,7 +86,7 @@
  * @property {string} [common_app=common] - 公共应用，存放公共模型及逻辑
  * @property {string} [controller_folder=controller] - 控制器目录名
  * @property {string} [static_dir=''] - 静态文件目录，相对于应用根目录，为空时，关闭静态访问
- * @property {?object} [koa_body=null] - koa-body配置参数，为null或空时，关闭koa-body
+ * @property {import('koa-body').IKoaBodyOptions} [koa_body=null] - koa-body配置参数，为null或空时，关闭koa-body
  * @property {string} [base_dir] - 应用根目录（会自动计算）
  */
 
@@ -96,7 +96,7 @@
  * @property {string} [view_depr='/'] - 模版文件名分割符，'/'代表二级目录
  * @property {string} [view_ext='.htm'] - 模版文件后缀
  * @property {string} [view_engine=art-template] - 默认模版引擎，字符串或引擎类
- * @property {object} [view_filte={}] - 模版函数
+ * @property {Object} [view_filte={}] - 模版函数
  */
 
 /**
@@ -112,7 +112,7 @@
  */
 
 /**
- * @typedef {object} DbConfig - 数据库配置
+ * @typedef {Object.<string, Object>} DbConfig - 数据库配置
  * @property {DbConfigItem} default - 数据库参数
  */
 
@@ -123,7 +123,7 @@
  */
 
 /**
- * @typedef {object} LogConfig - 日志配置
+ * @typedef {Object} LogConfig - 日志配置
  * @property {array} [log_level] - 允许输出的日志级别
  * @property {LogHandle} [log_handle] - 日志驱动
  */
