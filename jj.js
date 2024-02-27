@@ -1,6 +1,6 @@
 /**
  * jj.js核心库<br/>
- * {App, Cache, Context, Controller, Cookie, Ctx, Db, Logger, Middleware, Model, Pagination, Response, Upload, Url, View, utils, config}
+ * {App, Cache, Context, Controller, Cookie, Ctx, Db, Logger, Middleware, Model, Pagination, Request, Response, Upload, Url, View, utils, config}
  * @module core
  * @type {import('./types').Core}
  */

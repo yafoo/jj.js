@@ -10,6 +10,7 @@
  * @typedef {typeof import('./lib/middleware')} Middleware
  * @typedef {typeof import('./lib/model')} Model
  * @typedef {typeof import('./lib/pagination')} Pagination
+ * @typedef {typeof import('./lib/request')} Request
  * @typedef {typeof import('./lib/response')} Response
  * @typedef {typeof import('./lib/storage')} Storage
  * @typedef {typeof import('./lib/upload')} Upload
@@ -26,6 +27,7 @@
  * @typedef {typeof import('./lib/middleware').prototype} MiddlewareInstance
  * @typedef {typeof import('./lib/model').prototype} ModelInstance
  * @typedef {typeof import('./lib/pagination').prototype} PaginationInstance
+ * @typedef {typeof import('./lib/request').prototype} RequestInstance
  * @typedef {typeof import('./lib/response').prototype} ResponseInstance
  * @typedef {typeof import('./lib/upload').prototype} UploadInstance
  * @typedef {typeof import('./lib/url').prototype} UrlInstance
@@ -45,6 +47,7 @@
  * @property {Middleware} Middleware
  * @property {Model} Model
  * @property {Pagination} Pagination
+ * @property {Request} Request
  * @property {Response} Response
  * @property {Upload} Upload
  * @property {Url} Url
@@ -67,6 +70,7 @@
  * @property {MiddlewareInstance} middleware
  * @property {ModelInstance} model
  * @property {PaginationInstance} pagination
+ * @property {RequestInstance} request
  * @property {ResponseInstance} response
  * @property {UploadInstance} upload
  * @property {UrlInstance} url
@@ -282,6 +286,9 @@ class Ctx {
 
     /** @type {(Pagination & PaginationInstance)} */
     $pagination;
+
+    /** @type {(Request & RequestInstance)} */
+    $request;
 
     /** @type {(Response & ResponseInstance)} */
     $response;
