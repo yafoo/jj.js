@@ -5,5 +5,5 @@
         "resolveJsonModule": true,
         "checkJs": true
     },
-    "exclude": ["node_modules", "docs", "./lib/ctx.js"]
-  }
+    "exclude": ["node_modules", "docs"]
+}

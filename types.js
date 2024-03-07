@@ -171,6 +171,7 @@
 
 /**
  * @typedef {import('cookies').SetOption} CookieConfig - Cookie配置，一般不用设置
+ * @typedef {typeof import('koa').prototype.keys} Keygrip
  */
 
 /**
@@ -188,7 +189,7 @@
  * @property {CacheConfig} [cache]
  * @property {PageConfig} [page]
  * @property {RouteConfig} [routes]
- * @property {CookieConfig} [cookie]
+ * @property {CookieConfig & {keys?: String[] | Keygrip | undefined}} [cookie]
  * @property {TplConfig} [tpl]
  */
 
