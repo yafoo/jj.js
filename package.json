@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/yafoo/jj.js#readme",
   "dependencies": {
-    "@koa/router": "^13.0.1",
+    "@koa/router": "^13.1.0",
     "art-template": "^4.13.2",
     "escape-html": "^1.0.3",
     "is-class": "0.0.9",
