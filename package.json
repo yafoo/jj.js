@@ -24,13 +24,13 @@
     "art-template": "^4.13.2",
     "escape-html": "^1.0.3",
     "is-class": "0.0.9",
-    "koa": "^2.15.3",
+    "koa": "^2.16.0",
     "koa-body": "^6.0.1",
     "koa-static": "^5.0.0",
     "mysql": "^2.18.1",
     "watch": "^1.0.2"
   },
   "engines": {
-    "node": ">= 12.17.0"
+    "node": ">= 18"
   }
 }
