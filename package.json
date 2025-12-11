@@ -3,7 +3,9 @@
   "version": "0.18.0",
   "description": "A super simple lightweight NodeJS MVC framework（一个超级简单轻量的NodeJS MVC框架）",
   "main": "jj.js",
-  "scripts": {},
+  "scripts": {
+    "test": "node ./test/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yafoo/jj.js.git"
