@@ -210,7 +210,10 @@
  * @property {string} Key
  * @property {string} Default
  * @property {string} Extra
- * @typedef {Map<Pool>} PoolMap
+ */
+
+/**
+ * @typedef {import('./lib/db/sql').prototype} SqlInstance - Sql实例
  */
 
 
