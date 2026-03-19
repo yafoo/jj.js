@@ -1,4 +1,4 @@
-const {App, Logger} = require('../../../jj.js');
+const {App, Logger} = require('../../jj.js');
 
 //server
 const port = 3000;
