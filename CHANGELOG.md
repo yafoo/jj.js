@@ -1,3 +1,8 @@
+# v0.20.0
+1. loader增加json文件加载，去掉节点__node.isClass属性，__node.nodeType改为__node.type，type值由file、dir改为file、dir、json、class
+2. 
+3. 修改test代码路径
+
 # v0.19.0 / 2025-12-11
 1. 修改app.listen监听逻辑
 2. 新增支持sqlite数据库
