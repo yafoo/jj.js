@@ -4,7 +4,7 @@
   "description": "A super simple lightweight NodeJS MVC framework（一个超级简单轻量的NodeJS MVC框架）",
   "main": "jj.js",
   "scripts": {
-    "test": "node ./test/server.js"
+    "test": "node ./tests/demo/server.js"
   },
   "repository": {
     "type": "git",
@@ -36,5 +36,8 @@
   },
   "engines": {
     "node": ">= 18"
+  },
+  "devDependencies": {
+    "supertest": "^7.2.2"
   }
 }
