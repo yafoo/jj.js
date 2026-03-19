@@ -1,0 +1,7 @@
+<h3>Todo List</h3>
+<ul>
+    {{each list item }}
+    <li>{{item.id}} - {{item.title}} <a href="{{url('edit', {id: item.id})}}">编辑</a> <a href="{{url('del', {id: item.id})}}">删除</a></li>
+    {{/each}}
+    <li><a href="{{url('add')}}">新增</a></li>
+</ul>
