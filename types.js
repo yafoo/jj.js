@@ -1,5 +1,18 @@
 //------------------系统核心库------------------
 /**
+ * @typedef {Object} AppOptions
+ * @property {string} [env='development'] Environment
+ * @property {string[]} [keys] Signed cookie keys
+ * @property {boolean} [proxy] Trust proxy headers
+ * @property {number} [subdomainOffset] Subdomain offset
+ * @property {string} [proxyIpHeader='X-Forwarded-For'] Proxy IP header
+ * @property {number} [maxIpsCount=0] Max IPs read from proxy IP header (0 means infinity)
+ * @property {function} [compose] Function to handle middleware composition
+ * @property {boolean} [asyncLocalStorage=false] Enable AsyncLocalStorage
+ * @property {function|function[]} [middleware] Middleware, will be used before other app.use()
+ */
+
+/**
  * @typedef {typeof import('./lib/app')} App
  * @typedef {typeof import('./lib/cache')} Cache
  * @typedef {typeof import('./lib/context')} Context

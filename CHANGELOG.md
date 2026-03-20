@@ -1,6 +1,6 @@
-# v0.20.0
+# v ---
 1. loader增加json文件加载，去掉节点__node.isClass属性，__node.nodeType改为__node.type，type值由file、dir改为file、dir、json、class
-2. 
+2. App类参数修改，去除beforeUse，增加options.middleware，优化Exception日志输出
 3. 修改test代码路径
 
 # v0.19.0 / 2025-12-11
