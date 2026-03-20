@@ -1,7 +1,8 @@
 # v ---
 1. loader增加json文件加载，去掉节点__node.isClass属性，__node.nodeType改为__node.type，type值由file、dir改为file、dir、json、class
 2. App类参数修改，去除beforeUse，增加options.middleware，优化Exception日志输出
-3. 修改test代码路径
+3. 修改Db类获取sql语句方法，查询方法不再返回，改为通过db.sql获取，去除查询方法返回数据string类型
+10. 修改test代码路径
 
 # v0.19.0 / 2025-12-11
 1. 修改app.listen监听逻辑
