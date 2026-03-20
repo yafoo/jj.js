@@ -46,12 +46,10 @@ describe('app', () => {
             ctx.body = 'ok'
         })
         
-        await request(app.callback())
-            .get('/')
+        await request(app.callback()).get('/')
     })
 
     it('should support the type array of app options', async () => {
-        const storage = require('../..').storage
         const app = new App([
             async (ctx, next) => {
                 await next()
@@ -63,7 +61,6 @@ describe('app', () => {
 
         ])
         
-        await request(app.callback())
-            .get('/')
+        await request(app.callback()).get('/')
     })
 })
