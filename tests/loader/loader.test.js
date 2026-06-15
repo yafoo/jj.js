@@ -4,33 +4,33 @@ const assert = require('node:assert/strict')
 const loader = require('../../lib/loader.js')
 const node = loader('./dir', 'value1', ['value2'], () => {return 'value3'})
 
-describe('loader', () => {
-    it('should node is object', async () => {
+describe('loader 函数测试', () => {
+    it('node 应该是对象', async () => {
         assert.equal(typeof node, 'object')
     })
 
-    it('should has node.__node property', async () => {
+    it('应该具有 node.__node 属性', async () => {
         assert.equal(typeof node.__node, 'object')
         assert.equal(node.__node.path, require('path').join(__dirname, './dir/'))
         assert.equal(node.__node.type, 'dir')
     })
 
-    it('should has node.child1.__node property', async () => {
+    it('应该具有 node.child1.__node 属性', async () => {
         assert.equal(typeof node.child1, 'object')
         assert.equal(node.child1.__node.path, node.__node.path + 'child1/')
         assert.equal(node.child1.__node.type, 'dir')
     })
 
-    it('should has node.child2 property', async () => {
+    it('应该具有 node.child2 属性', async () => {
         assert.equal(typeof node.child2, 'object')
         assert.strictEqual(node.child2, node.child2)
     })
 
-    it('should node.child3 type is file', async () => {
+    it('node.child3 类型应该是 file', async () => {
         assert.equal(node.child3.__node.type, 'file')
     })
 
-    it('should node.child3 can read and write', async () => {
+    it('node.child3 应该支持读写', async () => {
         assert.strictEqual(node.child3, node.child3)
         assert.strictEqual(node.child3.data, 0)
         node.child3.data = 1
@@ -43,22 +43,17 @@ describe('loader', () => {
         assert.strictEqual(node.child3.__node, undefined)
     })
 
-    it('should node.child4 is not json', async () => {
+    it('node.child4 不应该是 json 类型', async () => {
         assert.strictEqual(node.child4.__node.type, 'file')
         assert.strictEqual(node.child4.data, 0)
     })
 
-    it('should node.child5 is json', async () => {
+    it('node.child5 应该是 json 类型', async () => {
         assert.strictEqual(node.child5.__node.type, 'json')
         assert.strictEqual(node.child5.data, 5)
     })
 
-    it('should node.child5 is json', async () => {
-        assert.strictEqual(node.child5.__node.type, 'json')
-        assert.strictEqual(node.child5.data, 5)
-    })
-
-    it('should node.child6.class is class', async () => {
+    it('node.child6.class 应该是 class 类型', async () => {
         assert.strictEqual(typeof node.child6.class, 'function')
         assert.strictEqual(node.child6.class.__node.type, 'class')
         assert.strictEqual(node.child6.class, node.child6.class)
@@ -66,7 +61,7 @@ describe('loader', () => {
         assert.strictEqual(node.child6.class.empty, undefined)
     })
 
-    it('should node.child6.class auto instantiation', async () => {
+    it('node.child6.class 应该自动实例化', async () => {
         assert.strictEqual(typeof node.child6.class.index, 'function')
         assert.strictEqual(node.child6.class.index, node.child6.class.index)
         assert.strictEqual(node.child6.class.index, node.child6.class.__node.instance.index)

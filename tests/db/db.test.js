@@ -2,29 +2,31 @@ const { describe, it, after } = require('node:test')
 const assert = require('node:assert/strict')
 const request = require('supertest')
 
-const {App, Db} = require('../..')
+const {App, Db, config} = require('../..')
+// 关闭SQL日志输出
+config.app.app_debug = false
 
-describe('db', () => {
-    it('should has basic properties', async () => {
+describe('Db 类测试', () => {
+    it('应该具有基础属性', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
             const db = new Db(ctx, 'sqlite')
             
             // 测试基础属性
-            assert.strictEqual(db._table, '', 'should have empty _table initially')
-            assert.strictEqual(typeof db._options, 'object', 'should have _options object')
-            assert.strictEqual(db._queryStr, '', 'should have empty _queryStr initially')
-            assert.strictEqual(typeof db._tableField, 'object', 'should have _tableField object')
-            assert.strictEqual(typeof db._sql, 'object', 'should have _sql object')
-            assert.strictEqual(db.sql, '', 'should have empty sql initially')
-            assert.strictEqual(db._config.type, 'sqlite', 'should have _config object with correct type')
+            assert.strictEqual(db._table, '', '初始 _table 应该为空')
+            assert.strictEqual(typeof db._options, 'object', '应该具有 _options 对象')
+            assert.strictEqual(db._queryStr, '', '初始 _queryStr 应该为空')
+            assert.strictEqual(typeof db._tableField, 'object', '应该具有 _tableField 对象')
+            assert.strictEqual(typeof db._sql, 'object', '应该具有 _sql 对象')
+            assert.strictEqual(db.sql, '', '初始 sql 应该为空')
+            assert.strictEqual(db._config.type, 'sqlite', '应该具有正确的数据库类型')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have table field', async () => {
+    it('应该能够获取表字段', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -37,64 +39,64 @@ describe('db', () => {
                 content TEXT NOT NULL DEFAULT '',
                 add_time INT NOT NULL DEFAULT 0
             )`);
-            assert.deepStrictEqual(await db.tableField('article'), ['id', 'title', 'content', 'add_time'], 'should has table field')
+            assert.deepStrictEqual(await db.tableField('article'), ['id', 'title', 'content', 'add_time'], '应该能够获取表字段')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have basic methods', async () => {
+    it('应该具有基础方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
             const db = new Db(ctx, 'sqlite')
 
             // 测试 table 方法
-            assert.strictEqual(db.table('article')._table, 'article', 'should set table name')
+            assert.strictEqual(db.table('article')._table, 'article', '应该设置表名')
             
             // 测试 prefix 方法
-            assert.strictEqual(db.prefix('test_')._options.prefix, 'test_', 'should set table prefix')
+            assert.strictEqual(db.prefix('test_')._options.prefix, 'test_', '应该设置表前缀')
             
             // 测试 distinct 方法
-            assert.strictEqual(db.distinct()._options.distinct, 'distinct', 'should set distinct')
+            assert.strictEqual(db.distinct()._options.distinct, 'distinct', '应该设置 distinct')
             
             // 测试 field 方法
-            assert.strictEqual(db.field('id, title')._options.field.length, 2, 'should set field')
+            assert.strictEqual(db.field('id, title')._options.field.length, 2, '应该设置查询字段')
             
             // 测试 join 方法
             db.join('user', 'article.user_id = user.id', 'left')
-            assert.strictEqual(Object.keys(db._options.join).length, 1, 'should set join')
+            assert.strictEqual(Object.keys(db._options.join).length, 1, '应该设置表连接')
             
             // 测试 where 方法
-            assert.strictEqual(db.where({id: 1})._options.where.length, 1, 'should set where')
+            assert.strictEqual(db.where({id: 1})._options.where.length, 1, '应该设置查询条件')
             
             // 测试 group 方法
-            assert.strictEqual(db.group('add_time')._options.group, 'group by `add_time`', 'should set group')
+            assert.strictEqual(db.group('add_time')._options.group, 'group by `add_time`', '应该设置分组')
             
             // 测试 having 方法
-            assert.strictEqual(db.having('count(*) > 1')._options.having, 'having count(*) > 1', 'should set having')
+            assert.strictEqual(db.having('count(*) > 1')._options.having, 'having count(*) > 1', '应该设置 having')
             
             // 测试 order 方法
-            assert.strictEqual(db.order('id', 'desc')._options.order.id, 'desc', 'should set order')
+            assert.strictEqual(db.order('id', 'desc')._options.order.id, 'desc', '应该设置排序')
             
             // 测试 limit 方法
-            assert.strictEqual(db.limit(0, 10)._options.limit, 'limit 0,10', 'should set limit')
+            assert.strictEqual(db.limit(0, 10)._options.limit, 'limit 0,10', '应该限制数量')
             
             // 测试 page 方法
             db.page(1, 20)
-            assert.strictEqual(db._options.limit, 'limit 0,20', 'should set limit by page')
-            assert.strictEqual(db._options.page.page, 1, 'should set page')
-            assert.strictEqual(db._options.page.pageSize, 20, 'should set page size')
+            assert.strictEqual(db._options.limit, 'limit 0,20', '应该按分页设置限制')
+            assert.strictEqual(db._options.page.page, 1, '应该设置页码')
+            assert.strictEqual(db._options.page.pageSize, 20, '应该设置每页数量')
             
             // 测试 reset 方法
-            assert.strictEqual(db.reset()._table, 'article', 'should keep table name after reset')
-            assert.strictEqual(db._options.field.length, 0, 'should reset field after reset')
+            assert.strictEqual(db.reset()._table, 'article', 'reset 后应该保留表名')
+            assert.strictEqual(db._options.field.length, 0, 'reset 后应该清空字段')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have query methods', async () => {
+    it('应该具有查询方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -116,45 +118,45 @@ describe('db', () => {
 
             // 测试 select 方法
             const selectResult = await db.table('article').select()
-            assert.strictEqual(selectResult.length, 3, 'should select all records')
+            assert.strictEqual(selectResult.length, 3, '应该查询所有记录')
 
             // 测试 find 方法
             const findResult = await db.table('article').where({id: 1}).find()
-            assert.strictEqual(findResult.id, 1, 'should find record by id')
+            assert.strictEqual(findResult.id, 1, '应该根据 id 查询记录')
 
             // 测试 value 方法
             const valueResult = await db.table('article').where({id: 1}).value('title')
-            assert.strictEqual(valueResult, 'Test 1', 'should get value by field')
+            assert.strictEqual(valueResult, 'Test 1', '应该获取字段值')
 
             // 测试 count 方法
             const countResult = await db.table('article').count()
-            assert.strictEqual(countResult, 3, 'should count all records')
+            assert.strictEqual(countResult, 3, '应该统计所有记录')
 
             // 测试 max 方法
             const maxResult = await db.table('article').max('add_time')
-            assert.strictEqual(maxResult, 3000, 'should get max value')
+            assert.strictEqual(maxResult, 3000, '应该获取最大值')
 
             // 测试 min 方法
             const minResult = await db.table('article').min('add_time')
-            assert.strictEqual(minResult, 1000, 'should get min value')
+            assert.strictEqual(minResult, 1000, '应该获取最小值')
 
             // 测试 avg 方法
             const avgResult = await db.table('article').avg('add_time')
-            assert.strictEqual(avgResult, 2000, 'should get avg value')
+            assert.strictEqual(avgResult, 2000, '应该获取平均值')
 
             // 测试 sum 方法
             const sumResult = await db.table('article').sum('add_time')
-            assert.strictEqual(sumResult, 6000, 'should get sum value')
+            assert.strictEqual(sumResult, 6000, '应该获取总和')
 
             // 测试 column 方法
             const columnResult = await db.table('article').column('title')
-            assert.deepStrictEqual(columnResult, ['Test 1', 'Test 2', 'Test 3'], 'should get column values')
+            assert.deepStrictEqual(columnResult, ['Test 1', 'Test 2', 'Test 3'], '应该获取列数据')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have modification methods', async () => {
+    it('应该具有数据修改方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -174,38 +176,38 @@ describe('db', () => {
 
             // 测试 insert 方法
             const insertResult = await db.table('article').data({title: 'Test Insert', content: 'Content Insert', add_time: 1000}).insert()
-            assert.strictEqual(typeof insertResult.insertId, 'number', 'should insert record and return insertId')
+            assert.strictEqual(typeof insertResult.insertId, 'number', '应该插入记录并返回 insertId')
             const insertedId = insertResult.insertId
 
             // 测试 update 方法
             const updateResult = await db.table('article').data({title: 'Test Update', content: 'Content Update'}).where({id: insertedId}).update()
-            assert.strictEqual(updateResult.affectedRows, 1, 'should update record')
+            assert.strictEqual(updateResult.affectedRows, 1, '应该更新记录')
 
             // 测试 inc 方法
             const incResult = await db.table('article').where({id: insertedId}).inc('add_time', 500)
-            assert.strictEqual(incResult.affectedRows, 1, 'should increment value')
+            assert.strictEqual(incResult.affectedRows, 1, '应该增加字段值')
 
             // 测试 dec 方法
             const decResult = await db.table('article').where({id: insertedId}).dec('add_time', 200)
-            assert.strictEqual(decResult.affectedRows, 1, 'should decrement value')
+            assert.strictEqual(decResult.affectedRows, 1, '应该减少字段值')
 
             // 测试 exp 方法
             const expResult = await db.table('article').data({title: ['exp', 'UPPER(title)']}).where({id: insertedId}).update()
-            assert.strictEqual(expResult.affectedRows, 1, 'should execute expression')
+            assert.strictEqual(expResult.affectedRows, 1, '应该执行表达式')
 
             // 测试 delete 方法
             const deleteResult = await db.table('article').where({id: insertedId}).delete()
-            assert.strictEqual(deleteResult.affectedRows, 1, 'should delete record')
+            assert.strictEqual(deleteResult.affectedRows, 1, '应该删除记录')
 
             // 验证删除结果
             const countResult = await db.table('article').count()
-            assert.strictEqual(countResult, 0, 'should have no records after delete')
+            assert.strictEqual(countResult, 0, '删除后应该没有记录')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have transaction methods', async () => {
+    it('应该具有事务方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -231,14 +233,14 @@ describe('db', () => {
 
             // 验证事务提交结果
             let countResult = await db.table('article').count()
-            assert.strictEqual(countResult, 2, 'should have 2 records after transaction commit')
+            assert.strictEqual(countResult, 2, '事务提交后应该有 2 条记录')
 
             // 测试事务回滚
             try {
                 await db.startTrans(async () => {
                     await db.table('article').data({title: 'Transaction Test 3', content: 'Content 3', add_time: 3000}).insert()
                     // 抛出错误，触发回滚
-                    throw new Error('Test rollback')
+                    throw new Error('测试回滚')
                 })
             } catch (error) {
                 // 忽略测试错误
@@ -246,13 +248,13 @@ describe('db', () => {
 
             // 验证事务回滚结果
             countResult = await db.table('article').count()
-            assert.strictEqual(countResult, 2, 'should still have 2 records after transaction rollback')
+            assert.strictEqual(countResult, 2, '事务回滚后应该仍然只有 2 条记录')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have cache methods', async () => {
+    it('应该具有缓存方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -263,22 +265,22 @@ describe('db', () => {
             
             // 测试 getCache 方法
             const cachedValue = db.getCache('test_key')
-            assert.strictEqual(cachedValue, 'test_value', 'should get cached value')
+            assert.strictEqual(cachedValue, 'test_value', '应该获取缓存值')
             
             // 测试 deleteCache 方法
             db.deleteCache('test_key')
             const deletedValue = db.getCache('test_key')
-            assert.strictEqual(deletedValue, undefined, 'should delete cached value')
+            assert.strictEqual(deletedValue, undefined, '应该删除缓存值')
             
             // 测试 cache 方法
             const cacheResult = db.cache(60)
-            assert.strictEqual(cacheResult._options.cache_time, 60, 'should set cache time')
+            assert.strictEqual(cacheResult._options.cache_time, 60, '应该设置缓存时间')
         })
         
         await request(app.callback()).get('/')
     })
 
-    it('should have other methods', async () => {
+    it('应该具有其他方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
             
@@ -286,15 +288,15 @@ describe('db', () => {
 
             // 测试 getSql 方法
             const getSqlResult = db.getSql(true)
-            assert.strictEqual(getSqlResult._options.getSql, true, 'should set getSql to true')
+            assert.strictEqual(getSqlResult._options.getSql, true, '应该设置 getSql 为 true')
             
             // 测试 allowField 方法
             const allowFieldResult = db.allowField(['id', 'title'])
-            assert.deepStrictEqual(allowFieldResult._options.allowField, ['id', 'title'], 'should set allowField')
+            assert.deepStrictEqual(allowFieldResult._options.allowField, ['id', 'title'], '应该设置字段过滤')
             
             // 测试 data 方法
             const dataResult = db.data({title: 'Test', content: 'Content'})
-            assert.deepStrictEqual(dataResult._options.data, {title: 'Test', content: 'Content'}, 'should set data')
+            assert.deepStrictEqual(dataResult._options.data, {title: 'Test', content: 'Content'}, '应该设置数据')
             
             // 测试 pagination 方法
             await db.execute(`
@@ -312,9 +314,9 @@ describe('db', () => {
 
             // 测试 pagination 方法
             const [paginationResult, pagination] = await db.table('article').page(1, 2).pagination()
-            assert.strictEqual(paginationResult.length, 2, 'should get 2 records per page')
-            assert.strictEqual(typeof pagination.total(), 'number', 'should return total as number')
-            assert.strictEqual(pagination.total() >= 5, true, 'should have at least 5 records')
+            assert.strictEqual(paginationResult.length, 2, '每页应该获取 2 条记录')
+            assert.strictEqual(typeof pagination.total(), 'number', '应该返回数字类型的总数')
+            assert.strictEqual(pagination.total() >= 5, true, '应该至少有 5 条记录')
         })
         
         await request(app.callback()).get('/')
