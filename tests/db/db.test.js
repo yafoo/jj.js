@@ -18,6 +18,11 @@ describe('Db 类测试', () => {
         config.app.app_debug = appDebug
     })
 
+    // 所有测试结束后清理定时器
+    after(() => {
+        Db._cache.setIntervalTime(0)
+    })
+
     it('应该具有基础属性', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
@@ -271,21 +276,24 @@ describe('Db 类测试', () => {
             
             const db = new Db(ctx, 'sqlite')
 
-            // 测试 setCache 方法
-            db.setCache('test_key', 'test_value', 60)
-            
-            // 测试 getCache 方法
-            const cachedValue = db.getCache('test_key')
-            assert.strictEqual(cachedValue, 'test_value', '应该获取缓存值')
-            
-            // 测试 deleteCache 方法
-            db.deleteCache('test_key')
-            const deletedValue = db.getCache('test_key')
-            assert.strictEqual(deletedValue, undefined, '应该删除缓存值')
-            
-            // 测试 cache 方法
+            // 测试 cache 方法（设置缓存时间）
             const cacheResult = db.cache(60)
             assert.strictEqual(cacheResult._options.cache_time, 60, '应该设置缓存时间')
+            
+            // 测试 cacheInstance 实例属性
+            assert.ok(db.cacheInstance, '应该具有 cacheInstance 实例属性')
+            assert.strictEqual(typeof db.cacheInstance.set, 'function', 'cacheInstance 应该有 set 方法')
+            assert.strictEqual(typeof db.cacheInstance.get, 'function', 'cacheInstance 应该有 get 方法')
+            assert.strictEqual(typeof db.cacheInstance.delete, 'function', 'cacheInstance 应该有 delete 方法')
+            
+            // 测试缓存功能
+            db.cacheInstance.set('test_key', 'test_value', 60)
+            const cachedValue = db.cacheInstance.get('test_key')
+            assert.strictEqual(cachedValue, 'test_value', '应该获取缓存值')
+            
+            db.cacheInstance.delete('test_key')
+            const deletedValue = db.cacheInstance.get('test_key')
+            assert.strictEqual(deletedValue, undefined, '应该删除缓存值')
         })
         
         await request(app.callback()).get('/')
@@ -331,9 +339,5 @@ describe('Db 类测试', () => {
         })
         
         await request(app.callback()).get('/')
-    })
-    
-    after(async () => {
-        Db.cache.setIntervalTime(0)
     })
 })

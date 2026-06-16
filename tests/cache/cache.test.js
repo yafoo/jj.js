@@ -1,4 +1,4 @@
-const { describe, it, beforeEach, afterEach } = require('node:test')
+const { describe, it, beforeEach, afterEach, after } = require('node:test')
 const assert = require('node:assert/strict')
 const Cache = require('../..').Cache
 
@@ -6,6 +6,11 @@ describe('Cache 类测试', () => {
     // 每个测试前清理缓存
     beforeEach(() => {
         Cache.delete()
+    })
+
+    // 所有测试结束后清理定时器
+    after(() => {
+        Cache.setIntervalTime(0)
     })
 
     describe('基础功能', () => {
