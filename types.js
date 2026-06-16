@@ -226,6 +226,7 @@
  */
 
 /**
+ * @typedef {import('./lib/db/sql')} Sql - Sql类
  * @typedef {import('./lib/db/sql').prototype} SqlInstance - Sql实例
  */
 
