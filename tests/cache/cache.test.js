@@ -195,6 +195,135 @@ describe('Cache 类测试', () => {
         })
     })
 
+    describe('setStore 方法', () => {
+        it('应该能够设置自定义的 Map 实例', () => {
+            const customStore = new Map()
+            Cache.setStore(customStore)
+            
+            assert.strictEqual(Cache.cache, customStore)
+            
+            // 恢复默认
+            Cache.setStore()
+        })
+
+        it('不传参数应该创建新的 Map', () => {
+            const oldCache = Cache.cache
+            Cache.setStore()
+            
+            assert.ok(Cache.cache instanceof Map)
+            assert.notStrictEqual(Cache.cache, oldCache)
+            
+            // 恢复默认
+            Cache.setStore(oldCache)
+        })
+
+        it('设置后应该能够正常使用缓存', () => {
+            const customStore = new Map()
+            Cache.setStore(customStore)
+            
+            Cache.set('test_key', 'test_value')
+            assert.strictEqual(Cache.get('test_key'), 'test_value')
+            assert.strictEqual(customStore.has('test_key'), true)
+            
+            // 恢复默认
+            Cache.setStore()
+            Cache.delete()
+        })
+    })
+
+    describe('子类测试', () => {
+        it('不设置 setStore 的子类应该共享父类的 cache', () => {
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache = new Cache()
+            
+            // 子类应该共享父类的 cache
+            assert.strictEqual(ChildCache.cache, Cache.cache)
+            
+            // 测试共享性
+            Cache.set('shared_key', 'shared_value')
+            assert.strictEqual(ChildCache.get('shared_key'), 'shared_value')
+            
+            ChildCache.set('child_key', 'child_value')
+            assert.strictEqual(Cache.get('child_key'), 'child_value')
+            
+            // 清理
+            Cache.delete()
+        })
+
+        it('不设置 setStore 的子类应该共享父类的 timer', () => {
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache = new Cache()
+            
+            // 子类应该共享父类的 timer
+            assert.strictEqual(ChildCache.timer, Cache.timer)
+        })
+
+        it('设置 setStore 的子类应该有独立的 cache', () => {
+            const customStore = new Map()
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache = new Cache(customStore)
+            
+            // 子类应该有独立的 cache
+            assert.ok(ChildCache.cache !== Cache.cache)
+            assert.strictEqual(ChildCache.cache, customStore)
+            
+            // 测试独立性
+            Cache.set('parent_key', 'parent_value')
+            ChildCache.set('child_key', 'child_value')
+            
+            assert.strictEqual(Cache.get('child_key'), undefined)
+            assert.strictEqual(ChildCache.get('parent_key'), undefined)
+            assert.strictEqual(ChildCache.get('child_key'), 'child_value')
+            
+            // 清理
+            Cache.delete()
+            ChildCache.delete()
+        })
+
+        it('设置 setStore 的子类应该有独立的 timer', () => {
+            const customStore = new Map()
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache = new Cache(customStore)
+            ChildCache.setIntervalTime(10000)
+            
+            // 子类应该有独立的 timer
+            assert.ok(ChildCache.timer !== Cache.timer)
+            ChildCache.setIntervalTime(0)
+        })
+
+        it('多个设置 setStore 的子类应该互相独立', () => {
+            const store1 = new Map()
+            const store2 = new Map()
+            
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache1 = new Cache(store1)
+            /** @type {any} */
+            // @ts-ignore
+            const ChildCache2 = new Cache(store2)
+            
+            // 各个子类应该独立
+            assert.ok(ChildCache1.cache !== Cache.cache)
+            assert.ok(ChildCache2.cache !== Cache.cache)
+            assert.ok(ChildCache1.cache !== ChildCache2.cache)
+            
+            // 测试独立性
+            ChildCache1.set('key1', 'value1')
+            ChildCache2.set('key2', 'value2')
+            
+            assert.strictEqual(ChildCache1.get('key2'), undefined)
+            assert.strictEqual(ChildCache2.get('key1'), undefined)
+            
+            // 清理
+            ChildCache1.delete()
+            ChildCache2.delete()
+        })
+    })
+
     describe('获取所有缓存', () => {
         it('get 不传参数应该返回整个 Map', () => {
             Cache.set('key1', 'value1')
@@ -206,58 +335,7 @@ describe('Cache 类测试', () => {
         })
     })
 
-    describe('子类隔离', () => {
-        it('应该为每个子类创建独立的缓存', () => {
-            /**
-             * @type {typeof Cache}
-             */
-            // @ts-ignore
-            const ChildCache1 = new Cache()
-            /**
-             * @type {typeof Cache}
-             */
-            // @ts-ignore
-            const ChildCache2 = new Cache()
 
-            // 子类应该有独立的 cache
-            assert.ok(ChildCache1.cache !== Cache.cache)
-            assert.ok(ChildCache2.cache !== Cache.cache)
-            assert.ok(ChildCache1.cache !== ChildCache2.cache)
-        })
-
-        it('子类应该能够独立使用缓存', () => {
-            /**
-             * @type {typeof Cache}
-             */
-            // @ts-ignore
-            const ChildCache = new Cache()
-
-            ChildCache.set('child_key', 'child_value')
-
-            assert.strictEqual(ChildCache.get('child_key'), 'child_value')
-            // 父类的 cache 不受影响
-            assert.strictEqual(Cache.get('child_key'), undefined)
-        })
-
-        it('子类应该独立过期', (t, done) => {
-            /**
-             * @type {typeof Cache}
-             */
-            // @ts-ignore
-            const ChildCache = new Cache()
-
-            ChildCache.set('expire_child', 'value', 1)
-            assert.strictEqual(ChildCache.get('expire_child'), 'value')
-
-            setTimeout(() => {
-                assert.strictEqual(ChildCache.get('expire_child'), undefined)
-                // 父类的缓存不受影响
-                Cache.set('parent_key', 'parent_value', 10)
-                assert.strictEqual(Cache.get('parent_key'), 'parent_value')
-                done()
-            }, 1100)
-        })
-    })
 
     describe('边界情况', () => {
         it('应该支持空字符串作为键', () => {
