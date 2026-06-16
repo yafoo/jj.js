@@ -1,12 +1,23 @@
-const { describe, it, after } = require('node:test')
+const { describe, it, beforeEach, afterEach, after } = require('node:test')
 const assert = require('node:assert/strict')
 const request = require('supertest')
 
 const {App, Db, config} = require('../..')
-// 关闭SQL日志输出
-config.app.app_debug = false
 
 describe('Db 类测试', () => {
+    let appDebug
+    beforeEach(() => {
+        // 保存原始配置
+        appDebug = config.app.app_debug
+        // 关闭SQL日志输出
+        config.app.app_debug = false
+    })
+
+    afterEach(() => {
+        // 恢复原始配置
+        config.app.app_debug = appDebug
+    })
+
     it('应该具有基础属性', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
