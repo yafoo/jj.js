@@ -1,25 +1,26 @@
 const { describe, it, beforeEach, afterEach } = require('node:test')
 const assert = require('node:assert/strict')
 const Logger = require('../..').Logger
+const { config } = require('../..')
 
 describe('Logger 类测试', () => {
-    // 保存原始的 handle 和配置
+    // 保存原始的配置
     let originalAppDebug
     let originalHandle
     let originalLogLevel
 
     beforeEach(() => {
         // 保存原始配置
-        originalAppDebug = Logger.appDebug
+        originalAppDebug = config.app.app_debug
         originalHandle = Logger.handle
-        originalLogLevel = Logger.cfgLog.log_level
+        originalLogLevel = config.log.log_level
     })
 
     afterEach(() => {
         // 恢复原始配置
-        Logger.appDebug = originalAppDebug
+        config.app.app_debug = originalAppDebug
         Logger.setHandle(originalHandle)
-        Logger.cfgLog.log_level = originalLogLevel
+        config.log.log_level = originalLogLevel
     })
 
     describe('基础日志方法', () => {
@@ -202,8 +203,8 @@ describe('Logger 类测试', () => {
         it('调试模式下应该输出所有日志', () => {
             let callCount = 0
 
-            Logger.appDebug = true
-            Logger.cfgLog.log_level = []
+            config.app.app_debug = true
+            config.log.log_level = []
             Logger.setHandle(() => {
                 callCount++
             })
@@ -220,10 +221,11 @@ describe('Logger 类测试', () => {
         })
 
         it('非调试模式下应该只输出配置的日志级别', () => {
+            /** @type {string[]} */
             let capturedLevels = []
 
-            Logger.appDebug = false
-            Logger.cfgLog.log_level = ['error', 'warning']
+            config.app.app_debug = false
+            config.log.log_level = ['error', 'warning']
             Logger.setHandle((level) => {
                 capturedLevels.push(level)
             })
@@ -242,8 +244,8 @@ describe('Logger 类测试', () => {
         it('应该支持空日志级别配置', () => {
             let callCount = 0
 
-            Logger.appDebug = false
-            Logger.cfgLog.log_level = []
+            config.app.app_debug = false
+            config.log.log_level = []
             Logger.setHandle(() => {
                 callCount++
             })
@@ -272,23 +274,13 @@ describe('Logger 类测试', () => {
             assert.strictEqual(result, Logger)
         })
 
-        it('传入非函数应该使用默认 handle', () => {
-            let callCount = 0
-            const originalHandle = Logger.cfgLog.log_handle
-
-            // 临时替换默认 handle
-            Logger.cfgLog.log_handle = () => {
-                callCount++
-            }
-
-            // @ts-ignore
-            Logger.setHandle('not a function')
-            Logger.info('测试')
-
-            assert.strictEqual(callCount, 1)
-
-            // 恢复
-            Logger.cfgLog.log_handle = originalHandle
+        it('传入非函数应该抛出错误', () => {
+            assert.throws(() => {
+                // @ts-ignore
+                Logger.setHandle('not a function')
+            }, {
+                message: 'handle must be a function'
+            })
         })
     })
 
@@ -333,13 +325,12 @@ describe('Logger 类测试', () => {
                 capturedLevels.push(level)
             })
 
-            // 子类输出日志
-            ChildLogger.appDebug = false
-            ChildLogger.cfgLog.log_level = ['error']
+            // 注意：子类不再独立配置，共享全局配置
+            // 这里只测试 handle 的独立性
             ChildLogger.error('error')
             ChildLogger.info('info')
 
-            assert.deepStrictEqual(capturedLevels, ['error'])
+            assert.strictEqual(capturedLevels.length, 2)
         })
 
         it('应该支持创建多个独立的子类', () => {
