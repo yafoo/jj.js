@@ -92,6 +92,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -106,6 +107,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -120,6 +122,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -134,6 +137,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -148,6 +152,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -164,6 +169,7 @@ describe('Logger 类测试', () => {
             let capturedLevel
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
                 capturedArgs = args
@@ -177,6 +183,7 @@ describe('Logger 类测试', () => {
         it('默认级别应该是 info', () => {
             let capturedLevel
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedLevel = level
             })
@@ -189,6 +196,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -259,6 +267,7 @@ describe('Logger 类测试', () => {
         it('应该能够设置自定义 handle', () => {
             let customHandleCalled = false
 
+            config.app.app_debug = true  // 启用调试模式
             const customHandle = (level, ...args) => {
                 customHandleCalled = true
             }
@@ -289,6 +298,7 @@ describe('Logger 类测试', () => {
             let childHandleCalled = false
             let parentHandleCalled = false
 
+            config.app.app_debug = true  // 启用调试模式
             const childHandle = () => {
                 childHandleCalled = true
             }
@@ -319,6 +329,7 @@ describe('Logger 类测试', () => {
             /** @type {string[]} */
             let capturedLevels = []
 
+            config.app.app_debug = true  // 启用调试模式
             /** @type {Logger} */
             // @ts-ignore
             const ChildLogger = new Logger((level, ...args) => {
@@ -337,6 +348,7 @@ describe('Logger 类测试', () => {
             let child1Calls = 0
             let child2Calls = 0
 
+            config.app.app_debug = true  // 启用调试模式
             /** @type {Logger} */
             // @ts-ignore
             const ChildLogger1 = new Logger(() => {
@@ -371,6 +383,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -395,6 +408,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -408,6 +422,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -421,6 +436,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -436,6 +452,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -448,6 +465,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -461,6 +479,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
         
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -473,6 +492,7 @@ describe('Logger 类测试', () => {
             /** @type {any[]} */
             let capturedArgs
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle((level, ...args) => {
                 capturedArgs = args
             })
@@ -487,6 +507,7 @@ describe('Logger 类测试', () => {
         it('应该支持连续快速输出', () => {
             let callCount = 0
 
+            config.app.app_debug = true  // 启用调试模式
             Logger.setHandle(() => {
                 callCount++
             })
