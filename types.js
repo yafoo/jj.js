@@ -94,38 +94,40 @@
 
 //------------------系统App配置---------------------
 /**
+ * @typedef {import('koa-body').KoaBodyMiddlewareOptions} KoaBodyMiddlewareOptions - koa-body配置参数
  * @typedef {Object} AppConfig - 系统配置
- * @property {boolean} [app_debug] - 调试模式，默认为 false
- * @property {boolean} [app_multi] - 是否开启多应用，默认为 false
- * @property {string} [default_app] - 默认应用，默认为 'app'
- * @property {string} [default_controller] - 默认控制器，默认为 'index'
- * @property {string} [default_action] - 默认方法，默认为 'index'
- * @property {string} [common_app] - 公共应用，存放公共模型及逻辑，默认为 'common'
- * @property {string} [controller_folder] - 控制器目录名，默认为 'controller'
- * @property {string} [static_dir] - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''
- * @property {import('koa-body').KoaBodyMiddlewareOptions} [koa_body] - koa-body配置参数，为null或空时，关闭koa-body，默认为 null
- * @property {string} [base_dir] - 应用根目录（会自动计算）
+ * @property {boolean} app_debug - 调试模式，默认为 false
+ * @property {boolean} app_multi - 是否开启多应用，默认为 false
+ * @property {string} default_app - 默认应用，默认为 'app'
+ * @property {string} default_controller - 默认控制器，默认为 'index'
+ * @property {string} default_action - 默认方法，默认为 'index'
+ * @property {string} common_app - 公共应用，存放公共模型及逻辑，默认为 'common'
+ * @property {string} controller_folder - 控制器目录名，默认为 'controller'
+ * @property {string} static_dir - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''
+ * @property {KoaBodyMiddlewareOptions?} koa_body - koa-body配置参数，为null或空时，关闭koa-body，默认为 null
+ * @property {string} base_dir - 应用根目录（会自动计算）
  */
 
 /**
+ * @typedef {Object.<string, function>} ViewFilter - 模版函数
  * @typedef {Object} ViewConfig - 模板配置
- * @property {string} [view_folder] - 模板目录名，默认为 'view'
- * @property {string} [view_depr] - 模版文件名分割符，'/'代表二级目录，默认为 '/'
- * @property {string} [view_ext] - 模版文件后缀，默认为 '.htm'
- * @property {string} [view_engine] - 默认模版引擎，字符串或引擎类，默认为 'art-template'
- * @property {Object} [view_filter] - 模版函数，系统已内置url函数，默认为 {}
+ * @property {string} view_folder - 模板目录名，默认为 'view'
+ * @property {string} view_depr - 模版文件名分割符，'/'代表二级目录，默认为 '/'
+ * @property {string} view_ext - 模版文件后缀，默认为 '.htm'
+ * @property {string|Object} view_engine - 默认模版引擎，字符串或引擎类，默认为 'art-template'
+ * @property {ViewFilter} view_filter - 模版函数，系统已内置url函数，默认为 {}
  */
 
 /**
  * @typedef {Object} DbConfigItem - 数据库参数
- * @property {string} [type] - 数据库类型，默认为 'mysql'
- * @property {string} [host] - 服务器地址，默认为 '127.0.0.1'
- * @property {string} [database] - 数据库名，默认为 'jj'
- * @property {string} [user] - 数据库用户名，默认为 'root'
- * @property {string} [password] - 数据库密码，默认为 ''
- * @property {string} [port] - 数据库连接端口，默认为 ''
- * @property {string} [charset] - 数据库编码，默认为 'utf8'
- * @property {string} [prefix] - 数据库表前缀，默认为 'jj_'
+ * @property {string} type - 数据库类型，默认为 'mysql'
+ * @property {string} host - 服务器地址，默认为 '127.0.0.1'
+ * @property {string} database - 数据库名，默认为 'jj'
+ * @property {string} user - 数据库用户名，默认为 'root'
+ * @property {string} password - 数据库密码，默认为 ''
+ * @property {string} port - 数据库连接端口，默认为 ''
+ * @property {string} charset - 数据库编码，默认为 'utf8'
+ * @property {string} prefix - 数据库表前缀，默认为 'jj_'
  * @property {function} [connect] - 自定义连接器
  */
 
@@ -135,39 +137,42 @@
  */
 
 /**
+ * @typedef {('system' | 'error' | 'warning' | 'info' | 'debug' | 'http' | 'sql')} LogLevel - 日志级别
+ */
+/**
  * @callback LogHandle - 日志驱动
- * @param {string} level - 日志级别
+ * @param {LogLevel} level - 日志级别
  * @param {...any} args - 日志数据，支持多个，支持对象
  */
 
 /**
  * @typedef {Object} LogConfig - 日志配置
- * @property {Array<string>} [log_level] - 允许输出的日志级别
- * @property {LogHandle} [log_handle] - 日志驱动
+ * @property {Array<LogLevel>} log_level - 允许输出的日志级别
+ * @property {LogHandle} log_handle - 日志驱动
  */
 
 /**
  * @typedef {Object} CacheConfig - 缓存配置
- * @property {number} [cache_time] - 缓存时间，默认1天（60 * 60 * 24秒），为空或false则为10年
- * @property {number} [clear_time] - 缓存自动清理周期，undefined: 清理一次, 0: 关闭自动清理, >0: 为周期时间（单位秒）
+ * @property {number} cache_time - 缓存时间，默认1天（60 * 60 * 24秒），为空或false则为10年
+ * @property {number} clear_time - 缓存自动清理周期，undefined: 清理一次, 0: 关闭自动清理, >0: 为周期时间（单位秒）
  */
 
 /**
  * @typedef {Object} PageConfig - 分页配置
- * @property {string} [page_key] - 分页标识，默认为 'page'
- * @property {string} [key_origin] - page_key来源，默认为 'query'
- * @property {number} [page_size] - 分页大小，默认为 10
- * @property {number} [page_length] - 分页长度，默认为 5
- * @property {string} [url_page] - 分页URL模板，可为路由名字，可用参数：页码${page}，样例1：':name'，样例2：'/list_${page}.html'，默认为 空
- * @property {string} [url_index] - 首页URL模板，可为路由名字，可用参数：页码${page}，样例1：':name'，样例2：'/list_${page}.html'，默认为 空
- * @property {string} [index_tpl] - 首页模板，默认为 '<li class="index"><a href="${url}">首页</a></li>'
- * @property {string} [end_tpl] - 末页模板，默认为 '<li class="end"><a href="${url}">末页</a></li>'
- * @property {string} [prev_tpl] - 上一页模板，默认为 '<li class="prev"><a href="${url}">上一页</a></li>'
- * @property {string} [next_tpl] - 下一页模板，默认为 '<li class="next"><a href="${url}">下一页</a></li>'
- * @property {string} [list_tpl] - 数字页模板，默认为 '<li><a href="${url}">${page}</a></li>'
- * @property {string} [active_tpl] - 当前页模板，默认为 '<li class="active"><a href="${url}">${page}</a></li>'
- * @property {string} [info_tpl] - 分页信息模板，默认为 '<span class="info">共${total_page}页，${total}条记录</span>'
- * @property {string} [template] - 渲染模板，默认为 '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
+ * @property {string} page_key - 分页标识，默认为 'page'
+ * @property {string} key_origin - page_key来源，默认为 'query'
+ * @property {number} page_size - 分页大小，默认为 10
+ * @property {number} page_length - 分页长度，默认为 5
+ * @property {string} url_page - 分页URL模板，可为路由名字，可用参数：页码${page}，样例1：':name'，样例2：'/list_${page}.html'，默认为 空
+ * @property {string} url_index - 首页URL模板，可为路由名字，可用参数：页码${page}，样例1：':name'，样例2：'/list_${page}.html'，默认为 空
+ * @property {string} index_tpl - 首页模板，默认为 '<li class="index"><a href="${url}">首页</a></li>'
+ * @property {string} end_tpl - 末页模板，默认为 '<li class="end"><a href="${url}">末页</a></li>'
+ * @property {string} prev_tpl - 上一页模板，默认为 '<li class="prev"><a href="${url}">上一页</a></li>'
+ * @property {string} next_tpl - 下一页模板，默认为 '<li class="next"><a href="${url}">下一页</a></li>'
+ * @property {string} list_tpl - 数字页模板，默认为 '<li><a href="${url}">${page}</a></li>'
+ * @property {string} active_tpl - 当前页模板，默认为 '<li class="active"><a href="${url}">${page}</a></li>'
+ * @property {string} info_tpl - 分页信息模板，默认为 '<span class="info">共${total_page}页，${total}条记录</span>'
+ * @property {string} template - 渲染模板，默认为 '<div class="pagination"><ul class="page">${index}${prev}${list}${next}${end}</ul>${info}</div>'
  */
 
 /**
@@ -176,7 +181,7 @@
  * @property {RouteMethod} [method] - 请求方法，支持['all', 'get', 'put', 'post', 'patch', 'delete', 'del']，默认为 'all'
  * @property {string} url - 请求url，支持变量正则，详细参考@koa/router
  * @property {(string|Middleware)} path - 响应地址(支持智能解析)或中间件函数，如果为中间件函数，则不会再执行后续代码
- * @property {string} [type='AppConfig.controller_folder'] - 响应类型，即path对应的类型，支持controller、middleware、view(ViewConfig.view_folder)
+ * @property {string} [type] - 响应类型，即path对应的类型，支持controller、middleware、view，默认为controller
  * @property {string} [name] - 路由命名，命一个名字后，可以使用Url类反向编译路由url
  */
 
@@ -191,8 +196,8 @@
 
 /**
  * @typedef {Object} TplConfig - 跳转、调试模板配置
- * @property {string} [jump] - 跳转模板，默认require('./tpl/jump')
- * @property {string} [exception] - 调试异常输出模板，默认require('./tpl/exception')
+ * @property {string} jump - 跳转模板，默认require('./tpl/jump')
+ * @property {string} exception - 调试异常输出模板，默认require('./tpl/exception')
  */
 
 /**
