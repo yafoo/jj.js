@@ -109,12 +109,13 @@
  */
 
 /**
+ * @typedef {typeof import('art-template')} ViewEngine - 模版引擎
  * @typedef {Object.<string, function>} ViewFilter - 模版函数
  * @typedef {Object} ViewConfig - 模板配置
  * @property {string} view_folder - 模板目录名，默认为 'view'
  * @property {string} view_depr - 模版文件名分割符，'/'代表二级目录，默认为 '/'
  * @property {string} view_ext - 模版文件后缀，默认为 '.htm'
- * @property {string|Object} view_engine - 默认模版引擎，字符串或引擎类，默认为 'art-template'
+ * @property {string|ViewEngine} view_engine - 默认模版引擎，字符串或引擎类，默认为 'art-template'
  * @property {ViewFilter} view_filter - 模版函数，系统已内置url函数，默认为 {}
  */
 
