@@ -277,22 +277,22 @@ describe('Db 类测试', () => {
             const db = new Db(ctx, 'sqlite')
 
             // 测试 cache 方法（设置缓存时间）
-            const cacheResult = db.cache(60)
+            const cacheResult = db.withCache(60)
             assert.strictEqual(cacheResult._options.cache_time, 60, '应该设置缓存时间')
             
-            // 测试 cacheInstance 实例属性
-            assert.ok(db.cacheInstance, '应该具有 cacheInstance 实例属性')
-            assert.strictEqual(typeof db.cacheInstance.set, 'function', 'cacheInstance 应该有 set 方法')
-            assert.strictEqual(typeof db.cacheInstance.get, 'function', 'cacheInstance 应该有 get 方法')
-            assert.strictEqual(typeof db.cacheInstance.delete, 'function', 'cacheInstance 应该有 delete 方法')
+            // 测试 cache 实例属性
+            assert.ok(db.cache, '应该具有 cache 实例属性')
+            assert.strictEqual(typeof db.cache.set, 'function', 'cache 应该有 set 方法')
+            assert.strictEqual(typeof db.cache.get, 'function', 'cache 应该有 get 方法')
+            assert.strictEqual(typeof db.cache.delete, 'function', 'cache 应该有 delete 方法')
             
             // 测试缓存功能
-            db.cacheInstance.set('test_key', 'test_value', 60)
-            const cachedValue = db.cacheInstance.get('test_key')
+            db.cache.set('test_key', 'test_value', 60)
+            const cachedValue = db.cache.get('test_key')
             assert.strictEqual(cachedValue, 'test_value', '应该获取缓存值')
             
-            db.cacheInstance.delete('test_key')
-            const deletedValue = db.cacheInstance.get('test_key')
+            db.cache.delete('test_key')
+            const deletedValue = db.cache.get('test_key')
             assert.strictEqual(deletedValue, undefined, '应该删除缓存值')
         })
         
@@ -332,7 +332,7 @@ describe('Db 类测试', () => {
             }
 
             // 测试 pagination 方法
-            const [paginationResult, pagination] = await db.table('article').page(1, 2).pagination()
+            const [paginationResult, pagination] = await db.table('article').page(1, 2).selectWithPagination()
             assert.strictEqual(paginationResult.length, 2, '每页应该获取 2 条记录')
             assert.strictEqual(typeof pagination.total(), 'number', '应该返回数字类型的总数')
             assert.strictEqual(pagination.total() >= 5, true, '应该至少有 5 条记录')
