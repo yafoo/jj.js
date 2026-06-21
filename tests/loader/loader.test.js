@@ -9,16 +9,16 @@ describe('loader 函数测试', () => {
         assert.equal(typeof node, 'object')
     })
 
-    it('应该具有 node.__node 属性', async () => {
-        assert.equal(typeof node.__node, 'object')
-        assert.equal(node.__node.path, require('path').join(__dirname, './dir/'))
-        assert.equal(node.__node.type, 'dir')
+    it('应该具有 node.__node__ 属性', async () => {
+        assert.equal(typeof node.__node__, 'object')
+        assert.equal(node.__node__.path, require('path').join(__dirname, './dir/'))
+        assert.equal(node.__node__.type, 'dir')
     })
 
-    it('应该具有 node.child1.__node 属性', async () => {
+    it('应该具有 node.child1.__node__ 属性', async () => {
         assert.equal(typeof node.child1, 'object')
-        assert.equal(node.child1.__node.path, node.__node.path + 'child1/')
-        assert.equal(node.child1.__node.type, 'dir')
+        assert.equal(node.child1.__node__.path, node.__node__.path + 'child1/')
+        assert.equal(node.child1.__node__.type, 'dir')
     })
 
     it('应该具有 node.child2 属性', async () => {
@@ -27,7 +27,7 @@ describe('loader 函数测试', () => {
     })
 
     it('node.child3 类型应该是 file', async () => {
-        assert.equal(node.child3.__node.type, 'file')
+        assert.equal(node.child3.__node__.type, 'file')
     })
 
     it('node.child3 应该支持读写', async () => {
@@ -40,22 +40,22 @@ describe('loader 函数测试', () => {
         const newData = {data: 3}
         node.child3 = newData
         assert.strictEqual(node.child3, newData)
-        assert.strictEqual(node.child3.__node, undefined)
+        assert.strictEqual(node.child3.__node__, undefined)
     })
 
     it('node.child4 不应该是 json 类型', async () => {
-        assert.strictEqual(node.child4.__node.type, 'file')
+        assert.strictEqual(node.child4.__node__.type, 'file')
         assert.strictEqual(node.child4.data, 0)
     })
 
     it('node.child5 应该是 json 类型', async () => {
-        assert.strictEqual(node.child5.__node.type, 'json')
+        assert.strictEqual(node.child5.__node__.type, 'json')
         assert.strictEqual(node.child5.data, 5)
     })
 
     it('node.child6.class 应该是 class 类型', async () => {
         assert.strictEqual(typeof node.child6.class, 'function')
-        assert.strictEqual(node.child6.class.__node.type, 'class')
+        assert.strictEqual(node.child6.class.__node__.type, 'class')
         assert.strictEqual(node.child6.class, node.child6.class)
         assert.strictEqual(new node.child6.class().index(), 'index')
         assert.strictEqual(node.child6.class.empty, undefined)
@@ -64,8 +64,8 @@ describe('loader 函数测试', () => {
     it('node.child6.class 应该自动实例化', async () => {
         assert.strictEqual(typeof node.child6.class.index, 'function')
         assert.strictEqual(node.child6.class.index, node.child6.class.index)
-        assert.strictEqual(node.child6.class.index, node.child6.class.__node.instance.index)
-        assert.strictEqual(node.child6.class.__node.instance, node.child6.class.__node.instance)
+        assert.strictEqual(node.child6.class.index, node.child6.class.__node__.instance.index)
+        assert.strictEqual(node.child6.class.__node__.instance, node.child6.class.__node__.instance)
         assert.strictEqual(node.child6.class.arg1, 'value1')
         assert.strictEqual(node.child6.class.arg2[0], 'value2')
         assert.strictEqual(node.child6.class.arg3(), 'value3')
@@ -80,7 +80,7 @@ describe('loader 函数测试', () => {
 
         const newInstance = new node.child6.class('value6', 'value7', 'value8')
         assert.notStrictEqual(newInstance, node.child6.class)
-        assert.notStrictEqual(newInstance, node.child6.class.__node.instance)
+        assert.notStrictEqual(newInstance, node.child6.class.__node__.instance)
         assert.strictEqual(newInstance.arg1, 'value6')
         assert.strictEqual(newInstance.arg2, 'value7')
         assert.strictEqual(newInstance.arg3, 'value8')
