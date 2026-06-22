@@ -302,6 +302,21 @@
  * @callback AsyncNext - 中间件函数
  */
 
+//------------------loader节点--------------------
+/**
+ * @typedef {('file' | 'class' | 'json' | 'dir' | '')} NodeType - loader节点类型
+ * @typedef {Object} NodeInfo - loader节点信息
+ * @property {string} path - 节点绝对路径
+ * @property {NodeType} type - 节点类型
+ * @property {Object.<string, any>} [instance] - class节点实例
+ * @typedef {Object} NodeProperty - 节点属性
+ * @property {NodeInfo} __NODE__ - 节点信息
+ * @property {Boolean} __ISCLASS__ - 是否class节点
+ * @typedef {function(new: any, ...any): any} ClassNode
+ * @typedef {Object.<string, any>} ObjectNode
+ * @typedef {ClassNode & ObjectNode & NodeProperty} Node
+ */
+
 
 //------------------Ctx系统基类--------------------
 /**
@@ -309,54 +324,71 @@
  */
 class Ctx {
     /** @type {$} */
+    // @ts-ignore
     $;
 
     /** @type {Utils} */
+    // @ts-ignore
     $utils;
 
     /** @type {Config} */
+    // @ts-ignore
     $config;
 
     /** @type {Cache} */
+    // @ts-ignore
     $cache;
 
     /** @type {Logger} */
+    // @ts-ignore
     $logger;
 
     /** @type {Context & ContextInstance} */
+    // @ts-ignore
     $context;
 
     /** @type {Controller & ControllerInstance} */
+    // @ts-ignore
     $controller;
 
     /** @type {Cookie & CookieInstance} */
+    // @ts-ignore
     $cookie;
 
     /** @type {Db & DbInstance} */
+    // @ts-ignore
     $db;
 
     /** @type {Middleware & MiddlewareInstance} */
+    // @ts-ignore
     $middleware;
 
     /** @type {Model & ModelInstance} */
+    // @ts-ignore
     $model;
 
     /** @type {Pagination & PaginationInstance} */
+    // @ts-ignore
     $pagination;
 
     /** @type {Request & RequestInstance} */
+    // @ts-ignore
     $request;
 
     /** @type {Response & ResponseInstance} */
+    // @ts-ignore
     $response;
 
     /** @type {Upload & UploadInstance} */
+    // @ts-ignore
     $upload;
 
     /** @type {Url & UrlInstance} */
+    // @ts-ignore
     $url;
 
     /** @type {View & ViewInstance} */
+    // @ts-ignore
     $view;
 }
 
