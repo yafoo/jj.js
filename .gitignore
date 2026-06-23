@@ -1,3 +1,4 @@
 /node_modules
 /.vscode
 /tests/_demo/test.db
+tests/_demo/types.js

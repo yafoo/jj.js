@@ -2,7 +2,7 @@ const {describe, it} = require('node:test')
 const assert = require('node:assert/strict')
 
 const loader = require('../../lib/loader.js')
-const node = loader('./dir', 'value1', ['value2'], () => {return 'value3'})
+const node = loader(require('path').join(__dirname, './dir'), 'value1', ['value2'], () => {return 'value3'})
 
 describe('loader 函数测试', () => {
     it('node 应该是对象', async () => {
