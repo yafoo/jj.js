@@ -1,5 +1,6 @@
 //------------------系统核心库------------------
 /**
+ * @typedef {import('koa').Middleware} KoaMiddleware - Koa中间件函数
  * @typedef {Object} AppOptions
  * @property {string} [env] - Environment，默认为 'development'
  * @property {string[]} [keys] - Signed cookie keys
@@ -9,7 +10,7 @@
  * @property {number} [maxIpsCount] - Max IPs read from proxy IP header，默认为 0（表示无限）
  * @property {function} [compose] - Function to handle middleware composition
  * @property {boolean} [asyncLocalStorage] - Enable AsyncLocalStorage，默认为 false
- * @property {function|function[]} [middleware] - Middleware，will be used before other app.use()
+ * @property {KoaMiddleware|KoaMiddleware[]} [middleware] - Middleware，will be used before other app.use()
  */
 
 /**
@@ -181,7 +182,7 @@
  * @typedef {Object} RouteConfigItem - 路由配置
  * @property {RouteMethod} [method] - 请求方法，支持['all', 'get', 'put', 'post', 'patch', 'delete', 'del']，默认为 'all'
  * @property {string} url - 请求url，支持变量正则，详细参考@koa/router
- * @property {(string|Middleware)} path - 响应地址(支持智能解析)或中间件函数，如果为中间件函数，则不会再执行后续代码
+ * @property {(string|KoaMiddleware)} path - 响应地址(支持智能解析)或中间件函数，如果为中间件函数，则不会再执行后续代码
  * @property {string} [type] - 响应类型，即path对应的类型，支持controller、middleware、view，默认为controller
  * @property {string} [name] - 路由命名，命一个名字后，可以使用Url类反向编译路由url
  */
@@ -273,8 +274,8 @@
  * @property {string} [filepath]
  * @property {string} [name]
  * @property {number} [size]
- * @property {string} [mimetype]
- * @property {string} [hash]
+ * @property {string?} [mimetype]
+ * @property {string?} [hash]
  * /
  * 
 /**
@@ -282,6 +283,20 @@
  * @property {number} [size] - 文件大小
  * @property {string} [ext] - 文件名后缀，多个用','隔开
  * @property {string} [type] - 文件mimetype，多个用','隔开
+ */
+
+
+//------------------Response类--------------------
+/**
+ * @typedef {Object} ExceptionData
+ * @property {string} msg - 错误消息
+ * @property {string[]} code - 错误上下文代码片段
+ * @property {string[]} stack - 调用栈信息
+ * @property {number} begin - 代码片段起始行号
+ * @property {number} row - 错误所在行号
+ * @property {number} end - 代码片段结束行号
+ * @property {number} column - 错误所在列号
+ * @property {number} nth - 代码片段中错误行的相对位置
  */
 
 

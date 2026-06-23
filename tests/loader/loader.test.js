@@ -17,7 +17,7 @@ describe('loader 函数测试', () => {
 
     it('应该具有 node.child1.__NODE__ 属性', async () => {
         assert.equal(typeof node.child1, 'object')
-        assert.equal(node.child1.__NODE__.path, node.__NODE__.path + 'child1/')
+        assert.equal(node.child1.__NODE__.path, node.__NODE__.path + 'child1' + require('path').sep)
         assert.equal(node.child1.__NODE__.type, 'dir')
     })
 
