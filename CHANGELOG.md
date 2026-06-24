@@ -1,8 +1,157 @@
-# v ---
-1. loader增加json文件加载，去掉节点__node.isClass属性，__node.nodeType改为__node.type，type值由file、dir改为file、dir、json、class
-2. App类参数修改，去除beforeUse，增加options.middleware，优化Exception日志输出
-3. 修改Db类获取sql语句方法，查询方法不再返回，改为通过db.sql获取，去除查询方法返回数据string类型
-10. 修改test代码路径
+# v0.20.0 / 2026-06-24
+
+## 破坏性变更（Breaking Changes）
+
+### Loader 类
+1. **节点属性变更**：
+   - `__node` 重命名为 `__NODE__`（大写）
+   - 新增 `__ISCLASS__` 属性，用于判断节点是否为 Class 类型
+   - 移除 `__node.isClass` 属性，改用 `__NODE__.type` 判断类型
+   - `__node.nodeType` 重命名为 `__NODE__.type`
+   - `type` 值由 `file`、`dir` 扩展为 `file`、`dir`、`json`、`class` 四种
+
+2. **新增 JSON 文件加载支持**：
+   - loader 现在支持自动加载 `.json` 文件
+   - JSON 文件会被识别为 `json` 类型节点
+
+3. **loader 函数参数变更**：
+   - `dir` 参数改名为 `path`
+   - 现在要求必须传入绝对路径
+   - 不再自动计算相对路径
+
+### App 类
+4. **构造函数参数调整**：
+   - 移除 `beforeUse` 参数
+   - 新增 `options.middleware` 参数，支持传入中间件函数或中间件数组
+   - 使用方式：`new App({ middleware: [middleware1, middleware2] })` 或 `new App(middleware)`
+
+### Db 类
+5. **SQL 语句获取方式变更**：
+   - 查询方法（`select`/`find`/`value`/`count` 等）不再返回 SQL 字符串
+   - 统一通过 `db.sql` 属性获取最后执行的 SQL 语句
+   - 移除查询方法返回数据中的 string 类型
+
+6. **缓存方法移除**：
+   - 移除 `getCache()` 方法
+   - 移除 `setCache()` 方法
+   - 移除 `deleteCache()` 方法
+   - 移除缓存自动清理功能（`Db.cache.setIntervalTime`）
+   - 新增Db类实例属性`_$cache`给内部使用
+
+7. **内部方法及属性变更**：
+   - `_tableField` 由普通对象改为 `Map` 类型
+   - 新增 `_$logger` 懒加载属性
+   - 新增 `_$pagination` 懒加载属性
+   - 新增 `setLogger()` 方法
+   - 设置缓存时间由`cache(time)`改为`withCache(time)`
+   - 分页查询方法由`pagination()`改为`paginate()`
+
+### Router 模块
+8. **路由执行方式变更**：
+   - 移除 `run.js` 模块的直接引用
+   - 路由不再直接调用 `run()` 函数
+   - 新增 `ctx.FOLDER` 属性，用于指定控制器目录类型
+   - 路由执行改为通过 `mvc` 中间件统一处理
+
+### 文件结构变更
+9. **run.js 重命名为 mvc.js**：
+   - `lib/run.js` → `lib/mvc.js`
+   - 函数名由 `run()` 改为 `mvc()`
+   - 现在作为 Koa 中间件使用
+
+## 功能优化
+
+### 异常处理
+10. **优化 Exception 日志输出**：
+    - 异常堆栈信息分行输出，便于查看
+    - 调试模式下显示完整错误信息
+    - 非 Error 对象也会被正确转换为 Error 实例
+
+### Ctx 类
+11. **优化模块智能加载逻辑**：
+    - 新增 `libs` 数组明确定义允许 `$` 访问的系统类库
+    - 优化属性查找逻辑，使用 `__ISCLASS__` 标记判断 Class 类型
+    - 新增 `ctx` 和 `$next` 属性的直接访问支持
+    - 改进 Proxy 构造逻辑，支持 Class 实例化和属性访问
+
+### Controller 类
+12. **新增懒加载实例化机制**：
+    - 新增 `_$view` 懒加载属性（View 实例）
+    - 新增 `_$response` 懒加载属性（Response 实例）
+    - 支持自定义注入（通过 setter 覆盖）
+
+### Middleware 类
+13. **新增懒加载实例化机制**：
+    - 新增 `_$response` 懒加载属性（Response 实例）
+    - `$show`/`$redirect`/`$success`/`$error` 方法改为调用 `_$response`
+
+### Response 类
+14. **新增懒加载实例化机制**：
+    - 新增 `_$request` 懒加载属性（Request 实例）
+    - 新增 `_$url` 懒加载属性（Url 实例）
+
+### View 类
+15. **优化模板路径解析**：
+    - 新增 `toLine` 转换，确保路径使用下划线命名
+    - 改进模板路径智能解析逻辑
+
+### Logger 类
+16. **优化日志处理**：
+    - 新增 `static handle` 属性，默认使用配置的日志处理器
+    - 优化 `setHandle()` 方法，增加类型检查
+    - 移除初始化时的 `Logger.setHandle()` 调用
+
+### Cache 类
+17. **优化缓存逻辑**：
+    - 默认全局共用缓存实例
+    - 优化缓存自动清理机制
+
+### Pagination 类
+18. **优化分页逻辑**：
+    - 新增 `options` 属性类型提示
+    - 优化 URL 规则解析，增加空值判断
+    - 改为使用 `_$url` 懒加载属性
+
+### Model 类
+19. **优化模型方法**：
+    - `del()` 方法增加空条件检查，防止误删
+    - `save()` 方法增加条件空值判断
+    - 完善类型提示
+
+### Cookie 类
+20. **完善 Cookie 操作**：
+    - 新增 `all()` 方法，获取所有 cookie
+    - 新增 `clear()` 方法，清理所有 cookie
+    - 新增 `keys()` 方法，获取所有 cookie key
+    - 新增 `delete()` 方法，删除指定 cookie
+
+### Types 生成器
+21. **重构类型文件生成逻辑**：
+    - 移除 `watch` 依赖，改用 Node.js 原生 `fs.watch`
+    - 新增防抖机制（300ms）
+    - 重构为 `TypesGenerator` 类
+    - 优化文件扫描逻辑
+    - 新增初始扫描功能
+
+### 配置系统
+22. **优化配置加载**：
+    - 调试模式默认关闭（`app_debug: false`）
+    - 新增 `jsconfig.json` 不存在时的警告提示
+    - 类型文件生成改为监听模式（`watch()`）
+
+### 其他优化
+23. **新增路径安全验证**：
+    - 新增 `lib/utils/validate.js` 工具
+    - 验证应用、控制器、方法名字的合法性
+
+24. **新增 MongoDB 支持**：
+    - 新增 `lib/db/mongodb.js` 驱动，未测试
+
+25. **测试代码路径调整**：
+    - `test/` 目录重命名为 `tests/`
+    - 新增多个测试文件
+
+---
 
 # v0.19.0 / 2025-12-11
 1. 修改app.listen监听逻辑
