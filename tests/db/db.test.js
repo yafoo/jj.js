@@ -20,7 +20,7 @@ describe('Db 类测试', () => {
 
     // 所有测试结束后清理定时器
     after(() => {
-        Db._cache.setIntervalTime(0)
+        Db.cache.setIntervalTime(0)
     })
 
     it('应该具有基础属性', async () => {
