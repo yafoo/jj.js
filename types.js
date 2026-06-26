@@ -98,12 +98,11 @@
  * @typedef {import('koa-body').KoaBodyMiddlewareOptions} KoaBodyMiddlewareOptions - koa-body配置参数
  * @typedef {Object} AppConfig - 系统配置
  * @property {boolean} app_debug - 调试模式，默认为 false
- * @property {boolean} app_multi - 是否开启多应用，默认为 false
- * @property {string} default_app - 默认应用，默认为 'app'
+ * @property {string} default_deep - 默认应用级别，为空则不分级，默认为 ''
  * @property {string} default_controller - 默认控制器，默认为 'index'
  * @property {string} default_action - 默认方法，默认为 'index'
- * @property {string} common_app - 公共应用，存放公共模型及逻辑，默认为 'common'
  * @property {string} controller_folder - 控制器目录名，默认为 'controller'
+ * @property {string} middleware_folder - 中间件目录名，默认为 'middleware'
  * @property {string} static_dir - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''
  * @property {KoaBodyMiddlewareOptions?} koa_body - koa-body配置参数，为null或空时，关闭koa-body，默认为 null
  * @property {string} base_dir - 应用根目录（会自动计算）
@@ -143,13 +142,13 @@
  */
 /**
  * @callback LogHandle - 日志驱动
- * @param {LogLevel} level - 日志级别
+ * @param {LogLevel} deep - 日志级别
  * @param {...any} args - 日志数据，支持多个，支持对象
  */
 
 /**
  * @typedef {Object} LogConfig - 日志配置
- * @property {Array<LogLevel>} log_level - 允许输出的日志级别
+ * @property {Array<LogLevel>} log_deep - 允许输出的日志级别
  * @property {LogHandle} log_handle - 日志驱动
  */
 

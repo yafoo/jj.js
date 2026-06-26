@@ -1,3 +1,14 @@
+# v*
+1. 删除app配置app_multi
+1. 删除app配置common_app
+1. 变更app配置default_app为default_level
+1. 新增app配置middleware_folder默认中间件目录
+1. 内置函数toHump改为toCamelCase
+1. 内置函数toLine改为toUnderScore
+1. ctx.APP改为ctx.DEEP
+1. ctx.FOLDER改为ctx.CONTROLLER_FOLDER
+1. 单、多应用改为单应用支持无限分级
+
 # v0.20.0 / 2026-06-24
 
 ## 破坏性变更（Breaking Changes）
