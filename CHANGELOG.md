@@ -9,6 +9,7 @@
 1. ctx.FOLDER改为ctx.CONTROLLER_FOLDER
 1. 应用根加载器名字由_改为$$
 1. 应用配置config移到app目录下
+1. 基类Ctx增加DEEP属性
 1. 单、多应用改为单应用支持无限分级
 
 # v0.20.0 / 2026-06-24
