@@ -13,7 +13,7 @@ module.exports = {
     },
     sqlite: {
         type      : 'sqlite', // 数据库类型
-        database  : path.join(__dirname, '../test.db'), // 数据库名
+        database  : path.join(__dirname, '../../test.db'), // 数据库名
         charset   : 'utf8mb4', // 数据库编码默认采用utf8
         prefix    : 'jj_' // 数据库表前缀
     }

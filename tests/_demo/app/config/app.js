@@ -2,7 +2,7 @@ const { default: koaBody } = require("koa-body");
 
 /**
  * @module config
- * @type {import('../../../types').AppConfig}
+ * @type {import('../../../../types').AppConfig}
  */
 module.exports = {
     app_debug: true,
