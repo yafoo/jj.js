@@ -21,8 +21,10 @@ class Console extends Controller
         console.log('=========================');
         console.log('this.$app:', this.$app);
         console.log('this.$test:', this.$test);
-        console.log('this.$config:', this.$config);
+        console.log('this.$config:', this.$config, this.$config.app);
         console.log('this.$logger.info:', this.$logger.info);
+        console.log('=========================');
+        console.log('this::console', this);
         this.$show('index');
     }
 }
