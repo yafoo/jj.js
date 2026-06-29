@@ -23,6 +23,9 @@ class Console extends Controller
         console.log('this.$test:', this.$test);
         console.log('this.$config:', this.$config, this.$config.app);
         console.log('this.$logger.info:', this.$logger.info);
+        console.log('this.DEEP', this.DEEP);
+        this._setDeep(module);
+        console.log('this.DEEP', this.DEEP);
         console.log('=========================');
         console.log('this::console', this);
         this.$show('index');
