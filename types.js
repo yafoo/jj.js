@@ -306,7 +306,7 @@
  * @property {typeof import('./lib/utils/error')} error
  * @property {typeof import('./lib/utils/fs')} fs
  * @property {typeof import('./lib/utils/md5')} md5
- * @property {typeof import('./lib/utils/parse')} parse
+ * @property {typeof import('./lib/utils/internal')} internal
  */
 
 
