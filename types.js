@@ -404,6 +404,15 @@ class Ctx {
     /** @type {View & ViewInstance} */
     // @ts-ignore
     $view;
+
+    /** @type {string} - 模块深度 */
+    DEEP;
+
+    /**
+     * 设置DEEP
+     * @param {NodeModule} mod - 固定值：module
+     */
+    _setDeep(mod) {}
 }
 
 /**
