@@ -19,8 +19,9 @@ class Todo extends Controller
     }
 
     async index() {
-        const list = await this._db.table('article').select();
+        const [list, pagination] = await this._db.table('article').paginate({page_size: 5});
         this.$assign('list', list);
+        this.$assign('page', pagination.render());
         this.$fetch();
     }
 
