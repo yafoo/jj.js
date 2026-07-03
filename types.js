@@ -16,6 +16,7 @@
 /**
  * @typedef {typeof import('./lib/app')} App
  * @typedef {typeof import('./lib/storage')} Storage
+ * @typedef {typeof import('./lib/loader')} Loader
  * @typedef {typeof import('./lib/cache')} Cache
  * @typedef {typeof import('./lib/logger')} Logger
  * @typedef {typeof import('./lib/context')} Context
@@ -69,6 +70,7 @@
  * @property {Utils} utils
  * @property {Config} config
  * @property {Storage} storage
+ * @property {Loader} loader
  */
 
 /**
