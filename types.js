@@ -142,13 +142,13 @@
  */
 /**
  * @callback LogHandle - 日志驱动
- * @param {LogLevel} deep - 日志级别
+ * @param {LogLevel} level - 日志级别
  * @param {...any} args - 日志数据，支持多个，支持对象
  */
 
 /**
  * @typedef {Object} LogConfig - 日志配置
- * @property {Array<LogLevel>} log_deep - 允许输出的日志级别
+ * @property {Array<LogLevel>} log_level - 允许输出的日志级别
  * @property {LogHandle} log_handle - 日志驱动
  */
 
