@@ -14,6 +14,7 @@
 1. loader函数空路径也会缓存
 1. loader函数新增clearPathCache()方法
 1. Request类新增ip()方法
+1. Db类获取数据表字段方法tableField()，默认缓存1分钟
 
 # v0.20.0 / 2026-06-24
 
