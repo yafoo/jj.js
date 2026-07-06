@@ -11,6 +11,8 @@
 1. 更换默认数据库为：sqlite
 1. 基类Ctx增加DEEP属性
 1. 单、多应用改为单应用支持无限分级
+1. loader函数空路径也会缓存
+1. loader函数新增clearPathCache()方法
 
 # v0.20.0 / 2026-06-24
 
