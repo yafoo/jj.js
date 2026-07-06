@@ -13,6 +13,7 @@
 1. 单、多应用改为单应用支持无限分级
 1. loader函数空路径也会缓存
 1. loader函数新增clearPathCache()方法
+1. Request类新增ip()方法
 
 # v0.20.0 / 2026-06-24
 
