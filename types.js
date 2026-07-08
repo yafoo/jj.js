@@ -228,7 +228,7 @@
  * @typedef {Array<RowData>} ListData - 多条数据
  * @typedef {('and' | 'or' | undefined)} Link - where连接条件
  * @typedef {('=' | '<>' | '!=' | '>' | '>=' | '<' | '<=' | 'like' | 'not like' | 'in' | 'not in' | 'between' | 'not between' | 'is' | 'is not' | 'exp')} Operator - where字段操作符
- * @typedef {Object.<string, (string | number | [Operator, any])>} Where - where条件数据
+ * @typedef {Object.<string, (string | number | [Operator, any, Link, any])>} Where - where条件数据
  * @typedef {Object.<string, any>} DbData - Db数据
  */
 
