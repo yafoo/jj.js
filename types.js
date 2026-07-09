@@ -228,7 +228,7 @@
  * @typedef {Array<RowData>} ListData - 多条数据
  * @typedef {('and' | 'or' | undefined)} Link - where连接条件
  * @typedef {('=' | '<>' | '!=' | '>' | '>=' | '<' | '<=' | 'like' | 'not like' | 'in' | 'not in' | 'between' | 'not between' | 'is' | 'is not' | 'exp')} Operator - where字段操作符
- * @typedef {Object.<string, (string | number | [Operator, any, Link, any])>} Where - where条件数据
+ * @typedef {Object.<string, (string | number | [Operator, any] | [Operator, any, Link] | [Operator, any, Link, any])>} Where - where条件数据
  * @typedef {Object.<string, any>} DbData - Db数据
  */
 
@@ -300,6 +300,11 @@
  * @property {number} nth - 代码片段中错误行的相对位置
  */
 
+
+//------------------Controller类--------------------
+/**
+ * @typedef {(string | {middleware: string, except?: string | string[], accept?: string | string[]})} ControllerMiddleware - Controller中间件
+ */
 
 //------------------系统工具--------------------
 /**
@@ -412,9 +417,9 @@ class Ctx {
 
     /**
      * 设置DEEP
-     * @param {NodeModule} mod - 固定值：module
+     * @param {NodeModule} mdl - 固定传值：module
      */
-    _setDeep(mod) {}
+    _setDeep(mdl) {}
 }
 
 /**
