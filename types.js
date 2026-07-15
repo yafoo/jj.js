@@ -230,6 +230,7 @@
  * @typedef {('=' | '<>' | '!=' | '>' | '>=' | '<' | '<=' | 'like' | 'not like' | 'in' | 'not in' | 'between' | 'not between' | 'is' | 'is not' | 'exp')} Operator - where字段操作符
  * @typedef {Object.<string, (string | number | [Operator, any] | [Operator, any, Link] | [Operator, any, Link, any])>} Where - where条件数据
  * @typedef {Object.<string, any>} DbData - Db数据
+ * @typedef {[ListData, PaginationInstance]} PaginateResult - 分页查询结果
  */
 
 /**
