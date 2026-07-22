@@ -6,7 +6,9 @@
 
 ## 📖 项目介绍
 
-jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 Proxy 实现了**类库自动加载**、**懒加载**和 **Class 自动实例化及单例化**技术，所有类库想用直接调用，系统会自动导入，无需手动 require/import。
+jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 Proxy 实现了**类库自动加载**、**懒加载**和 **Class 自动实例化及单例化**技术，所有类库想用就能直接调用，系统会自动导入，无需手动 require/import。
+
+框架采用**单应用无限子级**架构，在 `app/` 目录下可自由创建任意层级的子模块（如 `app/admin/`、`app/api/`），每个子级拥有独立的 controller、model、middleware 等，子级自动向上继承父级类库。
 
 ### ✨ 核心特性
 
@@ -16,7 +18,7 @@ jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 P
 | 🔄 **自动加载** | 系统类库、用户类库都支持自动加载、懒加载 |
 | 🎯 **智能实例化** | Class 自动生成单实例，节省内存开销 |
 | 🧩 **三级中间件** | 应用级、路由级、控制器级，方便插件及二次开发 |
-| 🌐 **多应用模式** | 支持单应用和多应用两种运行模式 |
+| 🌳 **单应用多级模式** | 单应用架构，支持无限子级分层，模块化更清晰 |
 | 📝 **完整类型提示** | 基于 JSDoc，自动生成应用端 types 类型文件 |
 
 ### 📍 项目地址
@@ -84,18 +86,24 @@ node server.js
 
 ```
 project/
-├── app/                    # 应用目录（默认应用，可改名）
+├── app/                    # 应用目录（根级，不可改名）
 │   ├── controller/         # 控制器目录（可改名）
 │   │   └── index.js        # 首页控制器
 │   ├── view/               # 模板目录（可改名）
 │   │   └── index/          # index 控制器模板
 │   │       └── index.htm   # 模板文件
-│   ├── middleware/         # 中间件目录（不可改名）
+│   ├── middleware/         # 中间件目录（可改名）
 │   ├── model/              # 模型目录（可改名）
 │   ├── pagination/         # 分页目录（可改名）
 │   ├── logic/              # 逻辑目录（可改名）
-│   └── ...                 # 其他自定义目录
-├── common/                 # 公共应用目录（可选）
+│   ├── admin/              # 子级模块（示例）
+│   │   ├── controller/     # 子级控制器
+│   │   ├── model/          # 子级模型
+│   │   ├── middleware/     # 子级中间件
+│   │   └── view/           # 子级模板
+│   ├── api/
+│   │   └── controller/     # API 子级控制器
+│   └── ...                 # 其他自定义目录或子级
 ├── config/                 # 配置目录（不可改名）
 │   ├── app.js              # 应用配置
 │   ├── db.js               # 数据库配置
@@ -117,12 +125,9 @@ project/
 | 目录 | 必需 | 说明 |
 |------|------|------|
 | `config/` | ❌ | 应用配置目录，所有配置参数放在这里，可简化为 `config.js` |
-| `app/` | ✅ | 默认应用目录，支持多应用时可创建 `app2`、`app3` 等 |
-| `common/` | ❌ | 公共应用目录，存放公共 model、logic 等 |
+| `app/` | ✅ | 应用根目录，支持无限子级分层（如 `app/admin/`、`app/api/`） |
 | `public/` | ❌ | 静态资源目录，在 `config/app.js` 中通过 `static_dir` 配置 |
 | `server.js` | ✅ | 应用入口文件，名字可任意修改 |
-
-> **多应用模式**：在 `./config/app.js` 中设置 `app_multi: true` 即可启用。
 
 ---
 
@@ -213,25 +218,42 @@ module.exports = Index;
 
 **访问**：`http://127.0.0.1:3000/index/user`
 
-**加载流程**：
+#### 加载流程
 
 ```
 this.$db
   ↓
-1. 检查当前类实例是否有 $db 属性
+1. 检查当前层级目录 ./app/[deep]/db.js 或 ./app/[deep]/db/
+  ↓ (没有，向上遍历父级)
+2. 检查父级目录 ./app/db.js 或 ./app/db/
   ↓ (没有)
-2. 检查应用目录 ./app/db.js 或 ./app/db/
-  ↓ (没有)
-3. 检查应用根目录 ./db.js 或 ./db/
-  ↓ (没有)
-4. 检查框架 lib/db.js ✅ 找到！
+3. 检查框架 lib/db.js ✅ 找到！
   ↓
 自动实例化（单例）并返回 Db 实例
 ```
 
+> **向上继承**：子级模块可以访问父级定义的同名类库，自动向上查找最近的定义。系统类库（如 `$db`、`$model` 等）在应用目录找不到时，自动回退到框架内置类库。
+
 > **智能实例化**：调用 `this.$db.table('user')` 时，框架先检测是否有 `table` 静态方法，没有则自动 new 实例，然后调用实例方法。
 
-#### 示例 2：使用自定义模型
+#### 示例 2：子级模块
+
+在 `app/` 下创建子级目录即可实现模块化分层，每个子级拥有独立的 controller、model、middleware 等：
+
+```
+app/
+├── controller/index.js      # 根级控制器 → /index/index
+├── model/user.js            # 根级模型
+├── admin/
+│   ├── controller/index.js  # 子级控制器 → /admin/index/index
+│   └── model/admin.js       # 子级模型（可覆盖根级同名模型）
+└── api/
+    └── controller/index.js  # API 控制器 → /api/index/index
+```
+
+> **URL 规则**：URL 路径自动映射到子级，如 `/admin/index/index` 对应 `app/admin/controller/index.js` 的 `index` 方法。
+
+#### 示例 3：使用自定义模型
 
 **模型** `./app/model/user.js`：
 
@@ -270,12 +292,11 @@ async user() {
 ```javascript
 module.exports = {
     app_debug: false,              // 调试模式
-    app_multi: false,              // 是否开启多应用
-    default_app: 'app',            // 默认应用
+    default_deep: '',              // 默认应用深度（子级路径），为空表示 app 根目录
     default_controller: 'index',   // 默认控制器
     default_action: 'index',       // 默认方法
-    common_app: 'common',          // 公共应用
     controller_folder: 'controller', // 控制器目录名
+    middleware_folder: 'middleware', // 中间件目录名
     static_dir: '',                // 静态文件目录（为空关闭静态访问）
     koa_body: null                 // koa-body 配置（null 关闭）
 };
@@ -286,6 +307,11 @@ module.exports = {
 ```javascript
 module.exports = {
     default: {
+        type: 'sqlite',
+        database: ':memory:',   // 数据库文件绝对路径，支持 :memory: 内存数据库
+        prefix: 'jj_'
+    },
+    mysql: {
         type: 'mysql',
         host: '127.0.0.1',
         database: 'jj',
@@ -293,11 +319,6 @@ module.exports = {
         password: '',
         port: '',
         charset: 'utf8mb4',
-        prefix: 'jj_'
-    },
-    sqlite: {
-        type: 'sqlite',
-        database: ':memory:',
         prefix: 'jj_'
     },
     mongodb: {
