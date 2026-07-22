@@ -14,18 +14,18 @@ describe('Ctx 类测试', () => {
         assert.equal(typeof ctx, 'object')
     })
 
-    it('应该能访问 store 中的 $ 和 _ 属性', async () => {
+    it('应该能访问 store 中的 $ 和 $$ 属性', async () => {
         const mockStore = {
             $: {test: 'value'},
-            _: {APP: {testProp: 'testValue'}},
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $$: {testProp: {method1: () => 'testValue'}},
+            $config: {app: {app_debug: true}},
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
             const ctx = new Ctx()
             assert.strictEqual(ctx.$, mockStore.$)
-            assert.strictEqual(ctx._, mockStore._)
+            assert.strictEqual(ctx.$$, mockStore.$$)
         })
     })
 
@@ -36,9 +36,9 @@ describe('Ctx 类测试', () => {
                 logger: {info: () => 'logger_info'},
                 db: {query: () => 'db_query'}
             },
-            _: {},
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $$: {},
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
@@ -52,9 +52,9 @@ describe('Ctx 类测试', () => {
     it('非 $ 开头的属性应该返回 undefined', async () => {
         const mockStore = {
             $: {test: 'value'},
-            _: {},
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $$: {},
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
@@ -64,58 +64,75 @@ describe('Ctx 类测试', () => {
         })
     })
 
-    it('应该能访问 APP 下的属性', async () => {
+    it('应该能访问 $$ 根级的属性', async () => {
         const mockStore = {
             $: {},
-            _: {
-                APP: {
-                    testProp: {method1: () => 'app_method'}
-                }
+            $$: {
+                testProp: {method1: () => 'root_method'}
             },
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
             const ctx = new Ctx()
-            // $prop 返回的是一个 Proxy 函数包装器
-            assert.equal(typeof ctx.$testProp, 'function')
-            // 可以访问其方法
-            assert.strictEqual(ctx.$testProp.method1(), 'app_method')
+            assert.equal(typeof ctx.$testProp, 'object')
+            assert.strictEqual(ctx.$testProp.method1(), 'root_method')
         })
     })
 
-    it('应该能访问 COMMON 下的属性', async () => {
+    it('应该支持 DEEP 向上继承查找', async () => {
         const mockStore = {
             $: {},
-            _: {
-                APP: {},
-                COMMON: {
-                    commonProp: {method1: () => 'common_method'}
+            $$: {
+                rootProp: {method1: () => 'root_method'},
+                admin: {
+                    adminProp: {method1: () => 'admin_method'}
                 }
             },
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $config: null,
+            DEEP: 'admin'
         }
         
         storage.run(mockStore, () => {
             const ctx = new Ctx()
-            // $prop 返回的是一个 Proxy 函数包装器
-            assert.equal(typeof ctx.$commonProp, 'function')
-            // 可以访问其方法
-            assert.strictEqual(ctx.$commonProp.method1(), 'common_method')
+            assert.equal(typeof ctx.$adminProp, 'object')
+            assert.strictEqual(ctx.$adminProp.method1(), 'admin_method')
+            assert.equal(typeof ctx.$rootProp, 'object')
+            assert.strictEqual(ctx.$rootProp.method1(), 'root_method')
+        })
+    })
+
+    it('深层 DEEP 应该正确向上遍历', async () => {
+        const mockStore = {
+            $: {},
+            $$: {
+                rootProp: {method1: () => 'root_method'},
+                api: {
+                    v1: {
+                        v1Prop: {method1: () => 'v1_method'}
+                    }
+                }
+            },
+            $config: null,
+            DEEP: 'api/v1'
+        }
+        
+        storage.run(mockStore, () => {
+            const ctx = new Ctx()
+            assert.equal(typeof ctx.$v1Prop, 'object')
+            assert.strictEqual(ctx.$v1Prop.method1(), 'v1_method')
+            assert.equal(typeof ctx.$rootProp, 'object')
+            assert.strictEqual(ctx.$rootProp.method1(), 'root_method')
         })
     })
 
     it('不存在的属性应该返回 undefined', async () => {
         const mockStore = {
             $: {},
-            _: {
-                APP: {},
-                COMMON: {}
-            },
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $$: {},
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
@@ -138,13 +155,11 @@ describe('Ctx 类测试', () => {
         
         const mockStore = {
             $: {},
-            _: {
-                APP: {
-                    testClass: TestClass
-                }
+            $$: {
+                testClass: TestClass
             },
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
@@ -164,15 +179,13 @@ describe('Ctx 类测试', () => {
                     format: () => 'formatted'
                 }
             },
-            _: {
-                APP: {
-                    service: {
-                        getData: () => 'data'
-                    }
+            $$: {
+                service: {
+                    getData: () => 'data'
                 }
             },
-            APP: 'APP',
-            COMMON: 'COMMON'
+            $config: null,
+            DEEP: ''
         }
         
         storage.run(mockStore, () => {
@@ -182,19 +195,79 @@ describe('Ctx 类测试', () => {
         })
     })
 
+    it('应该正确处理 DEEP 属性', async () => {
+        const mockStore = {
+            $: {},
+            $$: {},
+            $config: null,
+            DEEP: 'admin'
+        }
+        
+        storage.run(mockStore, () => {
+            const ctx = new Ctx()
+            assert.strictEqual(ctx.DEEP, undefined)
+        })
+    })
+
     it('应该正确处理 $next 属性', async () => {
         const mockStore = {
             $: {},
-            _: {},
-            APP: 'APP',
-            COMMON: 'COMMON',
+            $$: {},
+            $config: null,
+            DEEP: '',
             $next: () => 'next'
         }
         
         storage.run(mockStore, () => {
             const ctx = new Ctx()
-            // $next 应该直接返回，不走代理逻辑
-            assert.strictEqual(ctx.$next, undefined) // 因为 store.$next 不存在
+            assert.strictEqual(ctx.$next, undefined)
+        })
+    })
+
+    it('应该正确处理 ctx 属性', async () => {
+        const mockStore = {
+            $: {},
+            $$: {},
+            $config: null,
+            DEEP: ''
+        }
+        
+        storage.run(mockStore, () => {
+            const ctx = new Ctx()
+            assert.strictEqual(ctx.ctx, undefined)
+        })
+    })
+
+    it('$config 应该能通过 $config 访问', async () => {
+        const mockStore = {
+            $: {},
+            $$: {},
+            $config: {app: {app_debug: true}},
+            DEEP: ''
+        }
+        
+        storage.run(mockStore, () => {
+            const ctx = new Ctx()
+            assert.equal(typeof ctx.$config, 'object')
+        })
+    })
+
+    it('子级属性应该优先于根级属性', async () => {
+        const mockStore = {
+            $: {},
+            $$: {
+                myProp: {method1: () => 'root_method'},
+                admin: {
+                    myProp: {method1: () => 'admin_method'}
+                }
+            },
+            $config: null,
+            DEEP: 'admin'
+        }
+        
+        storage.run(mockStore, () => {
+            const ctx = new Ctx()
+            assert.strictEqual(ctx.$myProp.method1(), 'admin_method')
         })
     })
 })
