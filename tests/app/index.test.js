@@ -42,7 +42,6 @@ describe('App 类测试', () => {
             assert.ok(ctx.APP_VERSION, 'APP_VERSION 属性不存在于 ctx 对象上')
             const store = storage.getStore()
             assert.ok(store.$, '$ 属性不存在于 storage 对象上')
-            assert.ok(store.$$, '$$ 属性不存在于 storage 对象上')
             assert.ok(store.$config, '$config 属性不存在于 storage 对象上')
             ctx.body = 'ok'
         })

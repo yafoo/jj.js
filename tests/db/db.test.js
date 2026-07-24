@@ -33,7 +33,6 @@ describe('Db 类测试', () => {
             assert.strictEqual(db._table, '', '初始 _table 应该为空')
             assert.strictEqual(typeof db._options, 'object', '应该具有 _options 对象')
             assert.strictEqual(db._queryStr, '', '初始 _queryStr 应该为空')
-            assert.strictEqual(typeof db._tableField, 'object', '应该具有 _tableField 对象')
             assert.strictEqual(typeof db._sql, 'object', '应该具有 _sql 对象')
             assert.strictEqual(db.sql, '', '初始 sql 应该为空')
             assert.strictEqual(db._config.type, 'sqlite', '应该具有正确的数据库类型')
@@ -281,18 +280,18 @@ describe('Db 类测试', () => {
             assert.strictEqual(cacheResult._options.cache_time, 60, '应该设置缓存时间')
             
             // 测试 cache 实例属性
-            assert.ok(db.cache, '应该具有 cache 实例属性')
-            assert.strictEqual(typeof db.cache.set, 'function', 'cache 应该有 set 方法')
-            assert.strictEqual(typeof db.cache.get, 'function', 'cache 应该有 get 方法')
-            assert.strictEqual(typeof db.cache.delete, 'function', 'cache 应该有 delete 方法')
+            assert.ok(db._$cache, '应该具有 _$cache 实例属性')
+            assert.strictEqual(typeof db._$cache.set, 'function', 'cache 应该有 set 方法')
+            assert.strictEqual(typeof db._$cache.get, 'function', 'cache 应该有 get 方法')
+            assert.strictEqual(typeof db._$cache.delete, 'function', 'cache 应该有 delete 方法')
             
             // 测试缓存功能
-            db.cache.set('test_key', 'test_value', 60)
-            const cachedValue = db.cache.get('test_key')
+            db._$cache.set('test_key', 'test_value', 60)
+            const cachedValue = db._$cache.get('test_key')
             assert.strictEqual(cachedValue, 'test_value', '应该获取缓存值')
             
-            db.cache.delete('test_key')
-            const deletedValue = db.cache.get('test_key')
+            db._$cache.delete('test_key')
+            const deletedValue = db._$cache.get('test_key')
             assert.strictEqual(deletedValue, undefined, '应该删除缓存值')
         })
         
@@ -332,7 +331,7 @@ describe('Db 类测试', () => {
             }
 
             // 测试 pagination 方法
-            const [paginationResult, pagination] = await db.table('article').page(1, 2).selectWithPagination()
+            const [paginationResult, pagination] = await db.table('article').page(1, 2).paginate()
             assert.strictEqual(paginationResult.length, 2, '每页应该获取 2 条记录')
             assert.strictEqual(typeof pagination.total(), 'number', '应该返回数字类型的总数')
             assert.strictEqual(pagination.total() >= 5, true, '应该至少有 5 条记录')
