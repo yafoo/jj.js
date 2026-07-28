@@ -14,10 +14,10 @@ function showHelp() {
 jj.js - 轻量级 Node.js MVC 框架
 
 用法:
-  jj.js init <project-name>
+  npx jj.js init <project-name>
 
 示例:
-  jj.js init myapp
+  npx jj.js init myapp
 `);
 }
 
