@@ -37,9 +37,26 @@ jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 P
 npm i jj.js
 ```
 
-> **运行环境要求**：Node.js >= 18
+> **运行环境要求**：Node.js >= 20.19.0
 
-### Hello World
+### 方式一：CLI 初始化（推荐）
+
+```bash
+# 创建 Hello World 项目
+npx jj.js init hello myapp
+
+# 创建 Todo List 完整示例项目
+npx jj.js init todo myapp
+
+# 进入项目并启动
+cd myapp
+npm install
+npm start
+```
+
+### 方式二：手动创建
+
+#### Hello World
 
 **1. 创建控制器** `./app/controller/index.js`
 
