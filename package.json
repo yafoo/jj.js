@@ -23,19 +23,17 @@
   },
   "homepage": "https://github.com/yafoo/jj.js#readme",
   "dependencies": {
-    "@koa/router": "^13.1.0",
-    "art-template": "^4.13.2",
-    "escape-html": "^1.0.3",
-    "is-class": "0.0.9",
-    "koa": "^2.16.0",
-    "koa-body": "^6.0.1",
+    "@koa/router": "^15.7.0",
+    "@yafoo/art-template": "^5.1.0",
+    "koa": "^3.2.1",
+    "koa-body": "^8.0.0",
     "koa-static": "^5.0.0",
-    "mongodb": "^6.0.0",
+    "mongodb": "^7.5.0",
     "mysql": "^2.18.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^6.0.1"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 20.19.0"
   },
   "devDependencies": {
     "supertest": "^7.2.2"
