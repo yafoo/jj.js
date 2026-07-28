@@ -1,4 +1,8 @@
 const path = require('path');
+const fs = require('fs');
+
+const dataDir = path.join(__dirname, '../data');
+if(!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
 /**
  * @module config
@@ -7,7 +11,7 @@ const path = require('path');
 module.exports = {
     default: {
         type: 'sqlite',
-        database: path.join(__dirname, '../data/todo.db'),
+        database: path.join(dataDir, 'todo.db'),
         prefix: 'todo_'
     }
 };

@@ -37,7 +37,7 @@
         <div class="empty">暂无任务，添加一个吧！</div>
         {{else}}
         <ul class="todo-list">
-            {{each todos as todo}}
+            {{each todos todo}}
             <li class="todo-item {{if todo.completed}}completed{{/if}}">
                 <span class="todo-text">{{todo.title}}</span>
                 <div class="todo-actions">

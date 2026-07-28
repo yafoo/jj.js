@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 const templates = {
     hello: 'Hello World 示例项目',
@@ -13,16 +14,36 @@ function showHelp() {
 jj.js - 轻量级 Node.js MVC 框架
 
 用法:
-  jj.js init <template> [project-name]
-
-可用模板:
-  hello    Hello World 示例项目
-  todo     Todo List 完整示例项目
+  jj.js init <project-name>
 
 示例:
-  jj.js init hello myapp
-  jj.js init todo myapp
+  jj.js init myapp
 `);
+}
+
+function selectTemplate() {
+    return new Promise((resolve) => {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        console.log('\n请选择项目模板:');
+        const templateList = Object.entries(templates);
+        templateList.forEach(([name, desc], index) => {
+            console.log(`  ${index + 1}. ${name.padEnd(10)} - ${desc}`);
+        });
+
+        rl.question('\n请输入序号 (1): ', (answer) => {
+            rl.close();
+            const index = parseInt(answer) - 1;
+            if (index >= 0 && index < templateList.length) {
+                resolve(templateList[index][0]);
+            } else {
+                resolve('hello'); // 默认选择第一个
+            }
+        });
+    });
 }
 
 function copyDir(src, dest) {
@@ -92,16 +113,18 @@ if (!command || command === 'help' || command === '--help' || command === '-h') 
 }
 
 if (command === 'init') {
-    const template = args[1];
-    const projectName = args[2];
+    const projectName = args[1];
     
-    if (!template) {
-        console.error('错误: 请指定模板名称');
+    if (!projectName) {
+        console.error('错误: 请指定项目名称');
         showHelp();
         process.exit(1);
     }
     
-    initProject(template, projectName);
+    // 交互式选择模板
+    selectTemplate().then(template => {
+        initProject(template, projectName);
+    });
 } else {
     console.error(`错误: 未知的命令 "${command}"`);
     showHelp();

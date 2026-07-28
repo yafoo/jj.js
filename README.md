@@ -42,11 +42,8 @@ npm i jj.js
 ### 方式一：CLI 初始化（推荐）
 
 ```bash
-# 创建 Hello World 项目
-npx jj.js init hello myapp
-
-# 创建 Todo List 完整示例项目
-npx jj.js init todo myapp
+# 创建项目（交互式选择模板）
+npx jj.js init myapp
 
 # 进入项目并启动
 cd myapp

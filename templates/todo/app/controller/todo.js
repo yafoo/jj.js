@@ -3,8 +3,18 @@ const { Controller } = require('jj.js');
 class TodoController extends Controller {
     async index() {
         const db = this.$db;
-        const todos = await db.table('todo').order('id desc').select();
-        await this.$view.fetch('todo/index', { todos });
+        // 确保表存在
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS todo_todo (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL DEFAULT '',
+                completed INTEGER NOT NULL DEFAULT 0,
+                add_time INTEGER NOT NULL DEFAULT 0
+            )
+        `);
+        const todos = await db.table('todo').order('id', 'desc').select();
+        this.$assign('todos', todos);
+        await this.$fetch('todo/index');
     }
 
     async add() {
@@ -17,15 +27,15 @@ class TodoController extends Controller {
     }
 
     async toggle() {
-        const id = this.$request.param('id');
-        const completed = this.$request.param('completed');
+        const id = this.$request.query('id');
+        const completed = this.$request.query('completed', 0);
         const db = this.$db;
         await db.table('todo').where({ id }).update({ completed: completed ? 0 : 1 });
         this.$redirect('/todo');
     }
 
     async delete() {
-        const id = this.$request.param('id');
+        const id = this.$request.query('id');
         const db = this.$db;
         await db.table('todo').where({ id }).delete();
         this.$redirect('/todo');
