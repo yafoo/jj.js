@@ -1,6 +1,6 @@
 {
   "name": "jj.js",
-  "version": "1.0.0-rc.11",
+  "version": "1.0.0-rc.12",
   "description": "A super simple lightweight NodeJS MVC framework（一个超级简单轻量的NodeJS MVC框架）",
   "main": "jj.js",
   "bin": {
@@ -39,10 +39,18 @@
     "sqlite3": "^6.0.1"
   },
   "peerDependenciesMeta": {
-    "mongodb": { "optional": true },
-    "mysql": { "optional": true },
-    "sql.js": { "optional": true },
-    "sqlite3": { "optional": true }
+    "mongodb": {
+      "optional": true
+    },
+    "mysql": {
+      "optional": true
+    },
+    "sql.js": {
+      "optional": true
+    },
+    "sqlite3": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">= 20.19.0"
