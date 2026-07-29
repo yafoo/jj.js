@@ -99,6 +99,8 @@ node server.js
 
 ## 📚 开发手册
 
+- **详细开发文档**：[docs/guide.md](./docs/guide.md)
+
 ### 应用目录结构
 
 ```

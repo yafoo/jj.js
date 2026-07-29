@@ -1,4 +1,5 @@
-# v*
+# v1.0.0 / 2026-07-29
+1. 单、多应用改为单应用支持无限分级
 1. 删除app配置app_multi
 1. 删除app配置common_app
 1. 变更app配置default_app为default_level
@@ -10,11 +11,12 @@
 1. 应用根加载器名字由_改为$$
 1. 更换默认数据库为：sqlite
 1. 基类Ctx增加DEEP属性
-1. 单、多应用改为单应用支持无限分级
 1. loader函数空路径也会缓存
 1. loader函数新增clearPathCache()方法
 1. Request类新增ip()方法
 1. Db类获取数据表字段方法tableField()，默认缓存1分钟
+1. 系统不再自带数据库依赖，改由应用自己安装
+1. 新增完整开发文档
 
 # v0.20.0 / 2026-06-24
 
