@@ -2,11 +2,11 @@
 
 ![jj.js](./logo.png "jj.js")
 
-> 一个超级简单轻量的 Node.js MVC 框架
+> 一个简单轻量的 Node.js MVC 框架
 
 ## 📖 项目介绍
 
-jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 Proxy 实现了**类库自动加载**、**懒加载**和 **Class 自动实例化及单例化**技术，所有类库想用就能直接调用，系统会自动导入，无需手动 require/import。
+jj.js 是一个借鉴 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 Proxy 实现了**类库自动加载**、**懒加载**和 **Class 自动实例化及单例化**技术，所有类库想用就能直接调用，系统会自动导入，无需手动 require/import。
 
 框架采用**单应用无限子级**架构，在 `app/` 目录下可自由创建任意层级的子模块（如 `app/admin/`、`app/api/`），每个子级拥有独立的 controller、model、middleware 等，子级自动向上继承父级类库。
 
@@ -14,7 +14,7 @@ jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 P
 
 | 特性 | 说明 |
 |------|------|
-| 🏗️ **经典 MVC** | 模仿 ThinkPHP5，PHP 开发者友好，快速上手 |
+| 🏗️ **经典 MVC** | 借鉴 ThinkPHP5，PHP 开发者友好，快速上手 |
 | 🔄 **自动加载** | 系统类库、用户类库都支持自动加载、懒加载 |
 | 🎯 **智能实例化** | Class 自动生成单实例，节省内存开销 |
 | 🧩 **三级中间件** | 应用级、路由级、控制器级，方便插件及二次开发 |
@@ -25,7 +25,7 @@ jj.js 是一个模仿 ThinkPHP5 设计的轻量级 Node.js MVC 框架。基于 P
 
 - **GitHub**：[https://github.com/yafoo/jj.js](https://github.com/yafoo/jj.js)
 - **码云镜像**：[https://gitee.com/yafu/jj.js](https://gitee.com/yafu/jj.js)
-- **官网**：[https://me.i-i.me/special/jj.html](https://me.i-i.me/special/jj.html)
+- **开发文档**：[docs/guide.md](./docs/guide.md)
 
 ### 💡 在线体验
 
