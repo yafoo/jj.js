@@ -30,11 +30,19 @@
     "@yafoo/art-template": "^5.1.0",
     "koa": "^3.2.1",
     "koa-body": "^8.0.0",
-    "koa-static": "^5.0.0",
+    "koa-static": "^5.0.0"
+  },
+  "peerDependencies": {
     "mongodb": "^7.5.0",
     "mysql": "^2.18.1",
     "sql.js": "^1.14.1",
     "sqlite3": "^6.0.1"
+  },
+  "peerDependenciesMeta": {
+    "mongodb": { "optional": true },
+    "mysql": { "optional": true },
+    "sql.js": { "optional": true },
+    "sqlite3": { "optional": true }
   },
   "engines": {
     "node": ">= 20.19.0"

@@ -111,7 +111,7 @@
  */
 
 /**
- * @typedef {typeof import('art-template')} ViewEngine - 模版引擎
+ * @typedef {typeof import('@yafoo/art-template')} ViewEngine - 模版引擎
  * @typedef {Object.<string, function>} ViewFilter - 模版函数
  * @typedef {Object} ViewConfig - 模板配置
  * @property {string} view_folder - 模板目录名，默认为 'view'
@@ -219,11 +219,18 @@
 
 //------------------数据库类--------------------
 /**
- * @typedef {import('mysql').Pool} Pool - 连接池
- * @typedef {import('mysql').PoolConfig} PoolConfig - 连接池配置
- * @typedef {import('mysql').PoolConnection} PoolConnection - 连接池连接
- * @typedef {import('mysql').QueryOptions} QueryOptions - 查询参数
- * @typedef {import('mysql').OkPacket} OkPacket - 数据库查询结果
+ * @typedef {Object} OkPacket - 数据库操作结果
+ * @property {number} fieldCount - 字段数量
+ * @property {number} affectedRows - 受影响行数
+ * @property {number} insertId - 插入的自增ID
+ * @property {number} serverStatus - 服务器状态
+ * @property {number} warningCount - 警告数量
+ * @property {string} message - 消息
+ * @property {boolean} protocol41 - 是否使用4.1协议
+ * @property {number} changedRows - 变更行数
+ */
+
+/**
  * @typedef {Object.<string, any>} RowData - 单条数据
  * @typedef {Array<RowData>} ListData - 多条数据
  * @typedef {('and' | 'or' | undefined)} Link - where连接条件
