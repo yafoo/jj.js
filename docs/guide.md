@@ -260,7 +260,7 @@ class IndexController extends Controller {
 
 ```javascript
 /**
- * @type {import('jj.js').AppConfig}
+ * @type {import('jj.js/types').AppConfig}
  */
 module.exports = {
     app_debug: true,              // 调试模式（生产环境务必设为 false）

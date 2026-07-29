@@ -1,6 +1,6 @@
 /**
  * @module config
- * @type {import('jj.js').AppConfig}
+ * @type {import('jj.js/types').AppConfig}
  */
 module.exports = {
     app_debug: true,

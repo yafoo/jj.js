@@ -6,7 +6,7 @@ if(!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
 /**
  * @module config
- * @type {import('jj.js').DbConfig}
+ * @type {import('jj.js/types').DbConfig}
  */
 module.exports = {
     default: {
