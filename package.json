@@ -1,6 +1,6 @@
 {
   "name": "jj.js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple lightweight NodeJS MVC framework（一个简单轻量的NodeJS MVC框架）",
   "main": "jj.js",
   "bin": {
