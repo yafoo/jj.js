@@ -122,20 +122,54 @@
  */
 
 /**
- * @typedef {Object} DbConfigItem - 数据库参数
- * @property {string} type - 数据库类型，默认为 'mysql'
- * @property {string} host - 服务器地址，默认为 '127.0.0.1'
- * @property {string} database - 数据库名，默认为 'jj'
- * @property {string} user - 数据库用户名，默认为 'root'
- * @property {string} password - 数据库密码，默认为 ''
- * @property {string} port - 数据库连接端口，默认为 ''
- * @property {string} charset - 数据库编码，默认为 'utf8'
- * @property {string} prefix - 数据库表前缀，默认为 'jj_'
- * @property {function} [connect] - 自定义连接器
+ * @typedef {Object} SqliteConfig - SQLite数据库配置
+ * @property {'sqlite'} type - 数据库类型
+ * @property {string} database - 数据库文件路径，支持 ':memory:' 内存数据库
+ * @property {boolean} [optimize] - 是否启用性能优化（WAL模式、减少磁盘同步、锁等待超时），默认 false
+ * @property {string} [prefix] - 表前缀，默认 'jj_'
+ * @property {(config: SqliteConfig) => Sql} [connect] - 自定义连接器
  */
 
 /**
- * @typedef {Object.<string, Object>} DbConfig - 数据库配置
+ * @typedef {Object} SqljsConfig - SQL.js数据库配置
+ * @property {'sqljs'} type - 数据库类型
+ * @property {string} database - 数据库文件路径，支持 ':memory:' 内存数据库
+ * @property {boolean} [optimize] - 是否启用性能优化（WAL模式、减少磁盘同步、锁等待超时），默认 false
+ * @property {string} [prefix] - 表前缀，默认 'jj_'
+ * @property {(config: SqljsConfig) => Sql} [connect] - 自定义连接器
+ */
+
+/**
+ * @typedef {Object} MysqlConfig - MySQL数据库配置
+ * @property {'mysql'} type - 数据库类型
+ * @property {string} [host] - 服务器地址，默认 '127.0.0.1'
+ * @property {string} database - 数据库名
+ * @property {string} [user] - 数据库用户名，默认 'root'
+ * @property {string} [password] - 数据库密码
+ * @property {number} [port] - 数据库连接端口，默认 3306
+ * @property {string} [charset] - 数据库编码，默认 'utf8mb4'
+ * @property {string} [prefix] - 表前缀，默认 'jj_'
+ * @property {(config: MysqlConfig) => Sql} [connect] - 自定义连接器
+ */
+
+/**
+ * @typedef {Object} MongodbConfig - MongoDB数据库配置
+ * @property {'mongodb'} type - 数据库类型
+ * @property {string} [host] - 服务器地址，默认 '127.0.0.1'
+ * @property {string} database - 数据库名
+ * @property {string} [user] - 数据库用户名
+ * @property {string} [password] - 数据库密码
+ * @property {number} [port] - 数据库连接端口，默认 27017
+ * @property {string} [prefix] - 表前缀，默认 'jj_'
+ * @property {(config: MongodbConfig) => Sql} [connect] - 自定义连接器
+ */
+
+/**
+ * @typedef {SqliteConfig | SqljsConfig | MysqlConfig | MongodbConfig} DbConfigItem - 数据库配置联合类型
+ */
+
+/**
+ * @typedef {Object.<string, DbConfigItem>} DbConfig - 数据库配置
  * @property {DbConfigItem} default - 数据库参数
  */
 
