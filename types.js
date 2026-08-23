@@ -197,7 +197,7 @@
 /**
  * @typedef {Object} PageConfig - 分页配置
  * @property {string} page_key - 分页标识，默认为 'page'
- * @property {string} key_origin - page_key来源，默认为 'query'
+ * @property {'query'|'get'|'post'|'param'|'params'} key_origin - 分页数据来源，支持 get（URL查询参数）、post（请求体）、param（路由参数）、query（智能获取），兼容旧值 params，默认为 'query'
  * @property {number} page_size - 分页大小，默认为 10
  * @property {number} page_length - 分页长度，默认为 5
  * @property {string} url_page - 分页URL模板，可为路由名字，可用参数：页码${page}，样例1：':name'，样例2：'/list_${page}.html'，默认为 空
