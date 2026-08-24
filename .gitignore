@@ -4,3 +4,4 @@
 tests/_demo/types.js
 tests/_demo/test.db-shm
 tests/_demo/test.db-wal
+tests/_demo/data/todo.db

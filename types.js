@@ -275,6 +275,14 @@
  */
 
 /**
+ * @typedef {Object} PaginationData - 分页数据（适用于接口响应）
+ * @property {number} page - 当前页码
+ * @property {number} pageSize - 每页大小
+ * @property {number} total - 数据总数
+ * @property {number} totalPage - 总页数
+ */
+
+/**
  * @typedef {Object} FieldInfo - 字段信息
  * @property {string} Field
  * @property {string} Type
