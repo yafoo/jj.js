@@ -132,13 +132,13 @@ app.listen(port, () => {
 ```javascript
 const { Controller } = require('jj.js');
 
-class IndexController extends Controller {
+class Index extends Controller {
     index() {
         this.$show('Hello World!');
     }
 }
 
-module.exports = IndexController;
+module.exports = Index;
 ```
 
 启动应用：
@@ -240,7 +240,7 @@ jj.js 内置了强大的模块自动加载器（`loader`），基于目录结构
 在控制器中通过 `$` 前缀访问自动加载的模块：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         // this.$db → 自动加载 db 模块
         // this.$cache → 自动加载 cache 模块
@@ -481,7 +481,7 @@ module.exports = [
 ];
 
 // app/controller/user.js
-class UserController extends Controller {
+class User extends Controller {
     async detail() {
         const id = this.ctx.params.id;  // 获取路由参数
         this.$show(`用户 ID: ${id}`);
@@ -500,7 +500,7 @@ class UserController extends Controller {
 ```javascript
 const { Controller } = require('jj.js');
 
-class UserController extends Controller {
+class User extends Controller {
     // 默认方法（访问 /user 时调用）
     async index() {
         this.$show('用户列表');
@@ -513,7 +513,7 @@ class UserController extends Controller {
     }
 }
 
-module.exports = UserController;
+module.exports = User;
 ```
 
 ### 7.2 生命周期方法
@@ -521,7 +521,7 @@ module.exports = UserController;
 控制器提供两个生命周期方法：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     // 初始化方法：在控制器方法执行前自动执行
     async _init() {
         // 可用于权限检查、数据初始化等
@@ -642,7 +642,7 @@ async _init() {
 在控制器中，可以通过 `this.$xxx` 访问框架内置模块：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         this.ctx          // Koa 上下文对象
         this.$request     // Request 实例
@@ -673,16 +673,16 @@ class IndexController extends Controller {
 ```javascript
 const { Controller } = require('jj.js');
 
-class UserController extends Controller {
+class User extends Controller {
     // 定义中间件
     middleware = [
-        'auth',                          // 简单写法：中间件方法
+        'auth',                          // 简单写法：对应控制器同名（user）中间件的auth方法
         {
-            middleware: 'check_login/handle',     // 中间件方法
+            middleware: 'check_login/handle',     // 对应check_login中间件的handle方法
             except: ['login', 'register'] // 排除的方法
         },
         {
-            middleware: 'log',            // 中间件方法
+            middleware: 'log',            // 对应控制器同名（user）中间件的log方法
             accept: 'index,detail'        // 仅适用于指定方法
         }
     ];
@@ -691,6 +691,7 @@ class UserController extends Controller {
     async login() { /* ... */ }
     async register() { /* ... */ }
 }
+module.exports = User;
 ```
 
 中间件文件放在 `app/middleware/` 目录下：
@@ -699,7 +700,7 @@ class UserController extends Controller {
 // app/middleware/check_login.js
 const { Middleware } = require('jj.js');
 
-class CheckLoginMiddleware extends Middleware {
+class CheckLogin extends Middleware {
     async handle() {
         // 中间件逻辑
         if (!this.$request.get('token')) {
@@ -709,7 +710,7 @@ class CheckLoginMiddleware extends Middleware {
     }
 }
 
-module.exports = CheckLoginMiddleware;
+module.exports = CheckLogin;
 ```
 
 ### 7.6 空操作
@@ -717,12 +718,12 @@ module.exports = CheckLoginMiddleware;
 当请求的控制器或方法不存在时，框架会查找 `_empty` 控制器或方法：
 
 ```javascript
-class _emptyController extends Controller {
+class _empty extends Controller {
     async _empty() {
         this.$show('404 - 页面不存在');
     }
 }
-module.exports = _emptyController;
+module.exports = _empty;
 ```
 
 ---
@@ -736,7 +737,7 @@ module.exports = _emptyController;
 ```javascript
 const { Model } = require('jj.js');
 
-class UserModel extends Model {
+class User extends Model {
     // 数据表名（不含前缀），默认按类名转下划线
     table = 'user';
 
@@ -749,7 +750,7 @@ class UserModel extends Model {
     // connection = { type: 'mysql', host: '...', ... };
 }
 
-module.exports = UserModel;
+module.exports = User;
 ```
 
 ### 8.2 模型 CRUD
@@ -757,7 +758,7 @@ module.exports = UserModel;
 #### 新增数据 `add(data)`
 
 ```javascript
-const user = new UserModel(this.ctx);
+const user = new User(this.ctx);
 const result = await user.add({
     name: 'Tom',
     email: 'tom@example.com',
@@ -820,7 +821,7 @@ await user.del({ id: 1 });
 模型提供了 `db` 属性，可以直接使用完整的数据库查询构造器：
 
 ```javascript
-class UserModel extends Model {
+class User extends Model {
     async getActiveUsers() {
         return await this.db
             .where({ status: 1 })
@@ -844,7 +845,7 @@ class UserModel extends Model {
 在控制器中通过 `this.$db` 获取数据库实例：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         const db = this.$db;
 
@@ -1291,7 +1292,7 @@ app/view/todo/form.htm     → todo/form
 ### 10.4 在控制器中使用视图
 
 ```javascript
-class TodoController extends Controller {
+class Todo extends Controller {
     async index() {
         // 赋值模板变量
         this.$assign('title', 'Todo List');
@@ -1440,7 +1441,7 @@ module.exports = {
 通过 `this.$request` 访问请求数据：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         const req = this.$request;
 
@@ -1506,7 +1507,7 @@ const files = req.fileAll();          // 获取所有文件
 通过 `this.$response` 或直接使用控制器快捷方法：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         // 直接输出内容
         this.$show('Hello');
@@ -1573,10 +1574,10 @@ const app = new App([
 ```javascript
 const { Controller } = require('jj.js');
 
-class ArticleController extends Controller {
+class Article extends Controller {
     // 声明中间件
     middleware = [
-        'auth',                          // 所有方法都执行
+        'auth',                          // 控制器所有方法都执行，对应控制器同名的中间件auth方法
         {
             middleware: 'logVisit',
             except: ['delete']           // 排除 delete 方法
@@ -1596,28 +1597,29 @@ class ArticleController extends Controller {
 
 ### 13.3 编写中间件
 
-中间件文件放在 `app/middleware/` 目录下，继承 `Middleware` 类：
+中间件文件放在 `app/[DEEP]/middleware/` 目录下，继承 `Middleware` 类：
 
 ```javascript
-// app/middleware/auth.js
+// app/middleware/user.js
 const { Middleware } = require('jj.js');
 
-class AuthMiddleware extends Middleware {
-    async handle() {
+class User extends Middleware {
+    async auth() {
         const token = this.$request.header('Authorization');
         if (!token) {
             return this.$error('未授权访问', '/login');
         }
         // 验证 token...
+        // 验证失败：
+        // return this.$error('登录已失效', '/login');
+        // 验证通过：
         // 调用 $next()继续执行
         this.$next();
     }
 }
 
-module.exports = AuthMiddleware;
+module.exports = User;
 ```
-
-中间件方法名默认为 `handle`，也可以在路由配置中指定方法名。
 
 ---
 
@@ -1628,7 +1630,7 @@ module.exports = AuthMiddleware;
 通过 `this.$cookie` 操作 Cookie：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         const cookie = this.$cookie;
 
@@ -1696,7 +1698,7 @@ const keys = Cache.keys();
 ### 15.2 在控制器中使用
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         // 通过 this.$cache 访问
         this.$cache.set('key', 'value', 600);
@@ -1753,7 +1755,7 @@ Logger.log('custom_level', '自定义日志内容');
 ### 16.3 在控制器中使用
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         this.$logger.info('处理请求');
         this.$logger.error('错误信息', err);
@@ -1810,7 +1812,7 @@ module.exports = {
 在控制器中处理上传：
 
 ```javascript
-class UploadController extends Controller {
+class Upload extends Controller {
     async upload() {
         const upload = this.$upload;
 
@@ -1892,7 +1894,7 @@ const files = this.$request.fileAll();
 ### 18.1 基本用法
 
 ```javascript
-class ArticleController extends Controller {
+class Article extends Controller {
     async index() {
         // 使用数据库 paginate 方法
         const [list, pagination] = await this.$db
@@ -1952,13 +1954,13 @@ module.exports = {
 通过 `this.$url` 生成 URL：
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         const url = this.$url;
 
         // 智能生成 URL（相对于当前控制器）
-        url.build('edit');              // /current_controller/edit
-        url.build('edit', { id: 1 });   // /current_controller/edit?id=1
+        url.build('edit');              // /index/edit
+        url.build('edit', { id: 1 });   // /index/edit?id=1
 
         // 指定完整路径
         url.build('/user/profile');     // /user/profile
@@ -2065,7 +2067,7 @@ const hash = md5('hello world');
 ### 21.4 在控制器中使用
 
 ```javascript
-class IndexController extends Controller {
+class Index extends Controller {
     async index() {
         const time = this.$utils.date.format('YY-mm-dd HH:ii:ss');
         const hash = this.$utils.md5('test');
@@ -2170,7 +2172,7 @@ module.exports = {
 ```javascript
 const { Controller } = require('jj.js');
 
-class TodoController extends Controller {
+class Todo extends Controller {
     async index() {
         const db = this.$db;
         await db.execute(`
@@ -2212,7 +2214,7 @@ class TodoController extends Controller {
     }
 }
 
-module.exports = TodoController;
+module.exports = Todo;
 ```
 
 **app/view/todo/index.htm**
