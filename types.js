@@ -348,6 +348,7 @@
  * @property {number} end - 代码片段结束行号
  * @property {number} column - 错误所在列号
  * @property {number} nth - 代码片段中错误行的相对位置
+ * @typedef {'__EXIT__'} EXIT
  */
 
 
