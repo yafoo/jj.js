@@ -279,6 +279,8 @@ module.exports = {
 
 ### 5.2 数据库配置 (`config/db.js`)
 
+数据库配置支持**热加载**，修改配置文件后无需重启应用即可生效。
+
 ```javascript
 const path = require('path');
 
@@ -287,6 +289,7 @@ module.exports = {
     default: {
         type: 'sqlite',           // 数据库类型：sqlite | mysql | mongodb | sqljs
         database: ':memory:',     // 数据库文件绝对路径
+        optimize: false,          // 是否启用性能优化（默认关闭）
         prefix: 'jj_'             // 数据表前缀
     },
 
@@ -294,6 +297,7 @@ module.exports = {
     sqlite: {
         type: 'sqlite',
         database: path.join(__dirname, '../data/app.db'),
+        optimize: false,          // 启用后开启 WAL 模式、减少磁盘同步、锁等待超时
         prefix: 'jj_'
     },
 
@@ -324,10 +328,13 @@ module.exports = {
     sqljs: {
         type: 'sqljs',
         database: ':memory:',
+        optimize: false,          // 启用后开启性能优化
         prefix: 'jj_'
     }
 };
 ```
+
+> **性能优化说明**：`optimize` 参数仅对 SQLite 和 sql.js 驱动有效，启用后会开启 WAL 模式、减少不必要的磁盘同步、设置锁等待超时等优化，可显著提升读写并发性能。
 
 ### 5.3 视图配置 (`config/view.js`)
 
@@ -1929,7 +1936,29 @@ const size = pagination.pageSize();
 const html = pagination.render(100, 1, 10); // total, page, page_size
 ```
 
-### 18.3 自定义分页样式
+### 18.3 分页数据输出（适用于 API 接口）
+
+使用 `toJSON` 方法可输出分页元数据（不含 HTML），适用于 JSON API 响应：
+
+```javascript
+// 使用数据库 paginate 方法
+const [list, pagination] = await this.$db
+    .table('article')
+    .order('id', 'desc')
+    .paginate({ page_size: 10 });
+
+// 输出分页 JSON 数据
+const pageData = pagination.toJSON();
+// 返回: { page: 1, pageSize: 10, total: 100, totalPage: 10 }
+
+// 也可传入参数覆盖
+const pageData2 = pagination.toJSON(100, 1, 10); // total, page, page_size
+
+// 在 API 接口中使用
+this.$show({ code: 0, data: { list, page: pageData } });
+```
+
+### 18.4 自定义分页样式
 
 在 `config/page.js` 中自定义分页模板：
 
@@ -2007,12 +2036,17 @@ url.build(':article_detail', { id: 1 });
 ### 20.1 创建项目
 
 ```bash
-# 交互式创建（选择模板）
+# 交互式创建（选择模板），在指定目录下创建项目
 npx jj.js init myapp
+
+# 在当前目录下初始化项目（不指定目录名，直接回车）
+npx jj.js init
 
 # 查看帮助
 npx jj.js --help
 ```
+
+> **提示**：运行 `npx jj.js init` 后，在提示输入项目目录名时直接回车，即可在当前目录初始化项目。
 
 ### 20.2 项目模板
 
