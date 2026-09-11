@@ -98,6 +98,10 @@
 //------------------系统App配置---------------------
 /**
  * @typedef {import('koa-body').KoaBodyMiddlewareOptions} KoaBodyMiddlewareOptions - koa-body配置参数
+ * @typedef {import('koa-static').Options} KoaStaticOptions - koa-static配置参数
+ * @typedef {Object} StaticOptions - static配置参数
+ * @property {string} [static_dir] - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''
+ * @property {KoaStaticOptions} [options] - koa-static配置参数
  * @typedef {Object} AppConfig - 系统配置
  * @property {boolean} app_debug - 调试模式，默认为 false
  * @property {string} default_deep - 默认应用级别，为空则不分级，默认为 ''
@@ -105,7 +109,7 @@
  * @property {string} default_action - 默认方法，默认为 'index'
  * @property {string} controller_folder - 控制器目录名，默认为 'controller'
  * @property {string} middleware_folder - 中间件目录名，默认为 'middleware'
- * @property {string} static_dir - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''
+ * @property {string|StaticOptions} static_dir - 静态文件目录，相对于应用根目录，为空时，关闭静态访问，默认为 ''，或者为 {static_dir: '', options: {...koa-static配置参数}}
  * @property {KoaBodyMiddlewareOptions?} koa_body - koa-body配置参数，为null或空时，关闭koa-body，默认为 null
  * @property {string} base_dir - 应用根目录（会自动计算）
  */
