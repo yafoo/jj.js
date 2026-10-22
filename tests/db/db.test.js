@@ -269,6 +269,37 @@ describe('Db 类测试', () => {
         await request(app.callback()).get('/')
     })
 
+    it('事务回调里应该保留请求上下文', async () => {
+        const storage = require('../../lib/storage')
+        // 断言放在请求之外：中间件里抛的错会被框架的异常中间件吞掉，只回 500
+        const captured = {}
+
+        const app = new App(async (ctx, next) => {
+            ctx.body = 'ok'
+
+            const db = new Db(ctx, 'sqlite')
+            captured.store = storage.getStore()
+
+            try {
+                await db.startTrans(async () => {
+                    captured.innerStore = storage.getStore()
+                    // 访问 $ 属性会走 AsyncLocalStorage，取不到 store 就会抛
+                    // TypeError: Cannot destructure property '$' of 'store' as it is undefined
+                    captured.loggerType = typeof db.$logger
+                })
+            } catch (e) {
+                captured.error = e
+            }
+        })
+
+        const res = await request(app.callback()).get('/')
+        assert.strictEqual(res.status, 200)
+        assert.strictEqual(captured.error, undefined, '事务回调不应该抛错：' + (captured.error && captured.error.message))
+        assert.ok(captured.store, '请求上下文里应该有 store')
+        assert.strictEqual(captured.innerStore, captured.store, '事务回调里应该拿到同一个 store')
+        assert.ok(captured.loggerType, '事务回调里应该能访问 $ 属性')
+    })
+
     it('应该具有缓存方法', async () => {
         const app = new App(async (ctx, next) => {
             ctx.body = 'ok'
